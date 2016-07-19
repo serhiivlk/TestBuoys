@@ -10,6 +10,8 @@ android {
         targetSdkVersion 24
         versionCode 1
         versionName "1.0"
+
+        buildConfigField 'String', 'API_URL', '"http://localbuoywebserver.staturedev.com/api/MobileApi/"'
     }
     buildTypes {
         release {
@@ -20,7 +22,14 @@ android {
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
+    def supportLibraryVersion = '24.1.0'
+    def retrofitVersion = '2.1.0'
+
+    compile fileTree(include: ['*.jar'], dir: 'libs')
     testCompile 'junit:junit:4.12'
-    compile 'com.android.support:appcompat-v7:24.1.0'
+    compile 'com.android.support:appcompat-v7:' + supportLibraryVersion
+    compile 'com.android.support:recyclerview-v7:' + supportLibraryVersion
+    compile 'com.squareup.retrofit2:retrofit:' + retrofitVersion
+    compile 'com.squareup.retrofit2:converter-gson:' + retrofitVersion
+    compile 'com.squareup.okhttp3:logging-interceptor:3.4.1'
 }

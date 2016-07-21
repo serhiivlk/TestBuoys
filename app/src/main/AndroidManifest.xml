@@ -20,6 +20,12 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
+
+        <provider
+            android:name=".provider.LocalBuoysProvider"
+            android:authorities="com.thermsx.localbuoys.LocalBuoysProvider"
+            android:exported="true"
+            />
     </application>
 
 </manifest>

@@ -7,8 +7,6 @@ import java.util.List;
 
 public class LocationListResponse {
     @SerializedName("ReturnValue")
-    private List<Item> mReturnValue;
-    @SerializedName("Items")
     private List<Item> mItems;
     @SerializedName("ErrorMessage")
     private String mErrorMessage;
@@ -16,7 +14,7 @@ public class LocationListResponse {
     private String mResultCodeName;
 
     public List<Item> getItems() {
-        return mItems == null ? mReturnValue : mItems;
+        return mItems;
     }
 
     public String getErrorMessage() {

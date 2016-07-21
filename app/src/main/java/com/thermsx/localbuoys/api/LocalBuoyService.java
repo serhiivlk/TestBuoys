@@ -5,5 +5,5 @@ import retrofit2.http.GET;
 
 public interface LocalBuoyService {
     @GET("GetLocationList")
-    Call<LocationListResponce> getLocationList();
+    Call<LocationListResponse> getLocationList();
 }

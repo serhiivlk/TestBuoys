@@ -5,8 +5,10 @@ import com.thermsx.localbuoys.model.Item;
 
 import java.util.List;
 
-public class LocationListResponce {
+public class LocationListResponse {
     @SerializedName("ReturnValue")
+    private List<Item> mReturnValue;
+    @SerializedName("Items")
     private List<Item> mItems;
     @SerializedName("ErrorMessage")
     private String mErrorMessage;
@@ -14,7 +16,7 @@ public class LocationListResponce {
     private String mResultCodeName;
 
     public List<Item> getItems() {
-        return mItems;
+        return mItems == null ? mReturnValue : mItems;
     }
 
     public String getErrorMessage() {

@@ -1,4 +1,4 @@
-package com.thermsx.localbuoys;
+package com.thermsx.localbuoys.ui.activity;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -9,19 +9,20 @@ import android.view.View;
 import android.widget.ProgressBar;
 
 import com.socks.library.KLog;
+import com.thermsx.localbuoys.R;
 import com.thermsx.localbuoys.api.ApiFactory;
 import com.thermsx.localbuoys.api.LocalBuoyService;
 import com.thermsx.localbuoys.api.LocationListResponse;
 import com.thermsx.localbuoys.model.Item;
 import com.thermsx.localbuoys.provider.table.BrowseContract;
-import com.thermsx.localbuoys.ui.fragment.BrowseDBFragment;
+import com.thermsx.localbuoys.ui.fragment.BrowseFragment;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class MainActivity extends AppCompatActivity implements BrowseDBFragment.BrowseFragmentListener {
-    private static final String FRAGMENT_TAG = "items_list_cantainer";
+public class MainActivity extends AppCompatActivity implements BrowseFragment.BrowseFragmentListener {
+    private static final String FRAGMENT_TAG = "items_list_container";
 
     private static final String TAG = "MainActivity";
     private ProgressBar mProgressBar;
@@ -67,27 +68,27 @@ public class MainActivity extends AppCompatActivity implements BrowseDBFragment.
     }
 
     private void initBrowseFragment() {
-        BrowseDBFragment fragment = getBrowseFragment();
+        BrowseFragment fragment = getBrowseFragment();
         if (fragment == null) {
-            fragment = BrowseDBFragment.newInstance(-1);
+            fragment = BrowseFragment.newInstance(-1);
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
             transaction.replace(R.id.container, fragment, FRAGMENT_TAG);
             transaction.commit();
         }
     }
 
-    private BrowseDBFragment getBrowseFragment() {
-        return (BrowseDBFragment) getSupportFragmentManager().findFragmentByTag(FRAGMENT_TAG);
+    private BrowseFragment getBrowseFragment() {
+        return (BrowseFragment) getSupportFragmentManager().findFragmentByTag(FRAGMENT_TAG);
     }
 
     @Override
     public void onItemSelected(View view, long id) {
         KLog.d("id: " + id);
-        final BrowseDBFragment fragment = BrowseDBFragment.newInstance(id);
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.container, fragment, FRAGMENT_TAG);
-        transaction.addToBackStack(null);
-        transaction.commit();
+//        final BrowseFragment fragment = BrowseFragment.newInstance(id);
+//        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+//        transaction.replace(R.id.container, fragment, FRAGMENT_TAG);
+//        transaction.addToBackStack(null);
+//        transaction.commit();
     }
 
     private Context getContext() {

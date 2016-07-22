@@ -1,5 +1,7 @@
 package com.thermsx.localbuoys.api;
 
+import android.support.annotation.NonNull;
+
 import com.thermsx.localbuoys.BuildConfig;
 
 import okhttp3.OkHttpClient;
@@ -23,9 +25,13 @@ public class ApiFactory {
     }
 
     public static LocalBuoyService getService() {
-        Retrofit retrofit = RETROFIT_BUILDER
+        return getRetrofit().create(LocalBuoyService.class);
+    }
+
+    @NonNull
+    public static Retrofit getRetrofit() {
+        return RETROFIT_BUILDER
                 .client(OK_HTTP_BUILDER.build())
                 .build();
-        return retrofit.create(LocalBuoyService.class);
     }
 }

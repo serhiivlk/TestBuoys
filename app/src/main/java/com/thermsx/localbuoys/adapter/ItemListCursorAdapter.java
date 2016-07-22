@@ -14,6 +14,7 @@ import com.thermsx.localbuoys.model.Item;
 import com.thermsx.localbuoys.provider.table.BrowseContract;
 
 public class ItemListCursorAdapter extends CursorRecyclerViewAdapter<ItemListCursorAdapter.ItemViewHolder> {
+    private OnItemClickListener mOnItemClickListener;
 
     public ItemListCursorAdapter(Context context, Cursor cursor) {
         super(context, cursor);
@@ -32,13 +33,29 @@ public class ItemListCursorAdapter extends CursorRecyclerViewAdapter<ItemListCur
         holder.binding.setItem(item);
     }
 
-    public class ItemViewHolder extends RecyclerView.ViewHolder {
+    public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
+        mOnItemClickListener = onItemClickListener;
+    }
+
+    public interface OnItemClickListener {
+        void onItemClick(View view, int position, long id);
+    }
+
+    public class ItemViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         ListItemBrowseBinding binding;
 
         public ItemViewHolder(View itemView) {
             super(itemView);
 
             binding = DataBindingUtil.bind(itemView);
+            itemView.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View view) {
+            if (mOnItemClickListener != null) {
+                mOnItemClickListener.onItemClick(view, getLayoutPosition(), binding.getItem().getLocationId());
+            }
         }
     }
 }

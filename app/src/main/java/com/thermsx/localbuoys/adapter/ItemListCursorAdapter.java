@@ -38,7 +38,7 @@ public class ItemListCursorAdapter extends CursorRecyclerViewAdapter<ItemListCur
     }
 
     public interface OnItemClickListener {
-        void onItemClick(View view, int position, long id);
+        void onItemClick(View view, int position, Item item);
     }
 
     public class ItemViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
@@ -54,8 +54,9 @@ public class ItemListCursorAdapter extends CursorRecyclerViewAdapter<ItemListCur
         @Override
         public void onClick(View view) {
             if (mOnItemClickListener != null) {
-                mOnItemClickListener.onItemClick(view, getLayoutPosition(), binding.getItem().getLocationId());
+                mOnItemClickListener.onItemClick(view, getLayoutPosition(), binding.getItem());
             }
         }
     }
+
 }

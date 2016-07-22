@@ -51,9 +51,7 @@ public class MainActivity extends AppCompatActivity implements BrowseFragment.Br
                     BrowseContract.insert(getContext(), item);
                     if (item.getItems() != null) {
                         for (Item a : item.getItems()) {
-                            if (a.isBrowsable()) {
-                                BrowseContract.insert(getContext(), a);
-                            }
+                            BrowseContract.insert(getContext(), a);
                         }
                     }
                 }
@@ -82,8 +80,12 @@ public class MainActivity extends AppCompatActivity implements BrowseFragment.Br
     }
 
     @Override
-    public void onItemSelected(View view, long id) {
-        KLog.d("id: " + id);
+    public void onItemSelected(View view, Item item) {
+        long id = item.getLocationId();
+        KLog.d("id: " + id + "; isBrowsable: " + item.isBrowsable());
+        if (item.isBrowsable()) {
+            navigateTo(id);
+        }
     }
 
     protected void initializeFromParams(Bundle savedInstanceState) {

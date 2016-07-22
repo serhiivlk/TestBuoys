@@ -18,6 +18,7 @@ import com.socks.library.KLog;
 import com.thermsx.localbuoys.R;
 import com.thermsx.localbuoys.adapter.ItemListCursorAdapter;
 import com.thermsx.localbuoys.databinding.FragmentBrowseBinding;
+import com.thermsx.localbuoys.model.Item;
 import com.thermsx.localbuoys.provider.table.BrowseContract;
 
 public class BrowseFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>, ItemListCursorAdapter.OnItemClickListener {
@@ -105,13 +106,13 @@ public class BrowseFragment extends Fragment implements LoaderManager.LoaderCall
     }
 
     @Override
-    public void onItemClick(View view, int position, long id) {
+    public void onItemClick(View view, int position, Item item) {
         if (mBrowseFragmentListener != null) {
-            mBrowseFragmentListener.onItemSelected(view, id);
+            mBrowseFragmentListener.onItemSelected(view, item);
         }
     }
 
     public interface BrowseFragmentListener {
-        void onItemSelected(View view, long id);
+        void onItemSelected(View view, Item item);
     }
 }

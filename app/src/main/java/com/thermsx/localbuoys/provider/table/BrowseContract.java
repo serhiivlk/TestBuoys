@@ -19,6 +19,7 @@ public class BrowseContract {
 
     public static final String PATH = "browse";
     public static final String PATH_BY_PARENT = "browse_by_parent";
+
     public static final Uri CONTENT_URI =
             LocalBuoysProvider.BASE_CONTENT_URI.buildUpon().appendPath(PATH).build();
     public static final Uri CONTENT_URI_BY_PARENT_ID =
@@ -36,9 +37,11 @@ public class BrowseContract {
         int locationIdIndex = cursor.getColumnIndex(Column.LOCATION_ID);
         int parentIdIndex = cursor.getColumnIndex(Column.PARENT_ID);
         int nameIndex = cursor.getColumnIndex(Column.NAME);
+        int typeIndex = cursor.getColumnIndex(Column.ITEM_TYPE);
         Item item = new Item();
         item.setLocationId(cursor.getLong(locationIdIndex));
         item.setParentId(cursor.getLong(parentIdIndex));
+        item.setType(cursor.getInt(typeIndex));
         item.setName(cursor.getString(nameIndex));
         return item;
     }
@@ -47,6 +50,7 @@ public class BrowseContract {
         ContentValues values = new ContentValues();
         values.put(Column.LOCATION_ID, item.getLocationId());
         values.put(Column.PARENT_ID, item.getParentId());
+        values.put(Column.ITEM_TYPE, item.getType());
         values.put(Column.NAME, item.getName());
         return values;
     }
@@ -63,6 +67,7 @@ public class BrowseContract {
         String LOCATION_ID = BaseColumns._ID;
         String PARENT_ID = "parent_id";
         String NAME = "name";
+        String ITEM_TYPE = "item_type";
     }
 
     public interface Request {
@@ -71,6 +76,7 @@ public class BrowseContract {
         String TABLE_CREATE = "CREATE TABLE " + TABLE_NAME + " (" +
                 Column.LOCATION_ID + " INTEGER PRIMARY KEY, " +
                 Column.PARENT_ID + " INTEGER, " +
+                Column.ITEM_TYPE + " INTEGER, " +
                 Column.NAME + " TEXT)";
 
         String TABLE_DROP = "DROP TABLE IF EXIST " + TABLE_NAME;

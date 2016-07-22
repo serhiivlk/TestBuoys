@@ -4,6 +4,8 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import com.thermsx.localbuoys.provider.table.BrowseTable;
+
 public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String DB_NAME = "localbuoys.db";
     public static final int DB_VERSION = 1;

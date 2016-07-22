@@ -1,5 +1,6 @@
 package com.thermsx.localbuoys;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
@@ -7,10 +8,13 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
 
+import com.socks.library.KLog;
 import com.thermsx.localbuoys.api.ApiFactory;
 import com.thermsx.localbuoys.api.LocalBuoyService;
 import com.thermsx.localbuoys.api.LocationListResponse;
 import com.thermsx.localbuoys.model.Item;
+import com.thermsx.localbuoys.provider.table.BrowseTable;
+import com.thermsx.localbuoys.ui.fragment.BrowseDBFragment;
 import com.thermsx.localbuoys.ui.fragment.BrowseFragment;
 
 import retrofit2.Call;
@@ -22,7 +26,7 @@ public class MainActivity extends AppCompatActivity implements BrowseFragment.Br
 
     private static final String TAG = "MainActivity";
     private ProgressBar mProgressBar;
-    private BrowseFragment mFragment;
+//    private BrowseFragment mFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,7 +43,15 @@ public class MainActivity extends AppCompatActivity implements BrowseFragment.Br
             @Override
             public void onResponse(Call<LocationListResponse> call, Response<LocationListResponse> response) {
                 mProgressBar.setVisibility(View.GONE);
-                mFragment.setList(response.body().getItems().get(0).getItems());
+                LocationListResponse body = response.body();
+                KLog.d(body.getResultCodeName());
+
+                BrowseTable.crean(getContext());
+                for (Item item : body.getItems().get(0).getItems()) {
+                    BrowseTable.insert(getContext(), item);
+                }
+
+//                mFragment.setList(body.getItems().get(0).getItems());
             }
 
             @Override
@@ -51,21 +63,29 @@ public class MainActivity extends AppCompatActivity implements BrowseFragment.Br
     }
 
     private void initBrowseFragment() {
-        mFragment = getBrowseFragment();
-        if (mFragment == null) {
-            mFragment = new BrowseFragment();
+//        mFragment = getBrowseFragment();
+//        if (mFragment == null) {
+//            mFragment = new BrowseFragment();
+//            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+////            transaction.setCustomAnimations(
+////                    R.animator.slide_in_from_right, R.animator.slide_out_to_left,
+////                    R.animator.slide_in_from_left, R.animator.slide_out_to_right);
+//            transaction.replace(R.id.container, mFragment, FRAGMENT_TAG);
+//            transaction.addToBackStack(null);
+//            transaction.commit();
+//        }
+        BrowseDBFragment fragment = getBrowseFragment();
+        if (fragment == null) {
+            fragment = BrowseDBFragment.newInstance(-1);
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-//            transaction.setCustomAnimations(
-//                    R.animator.slide_in_from_right, R.animator.slide_out_to_left,
-//                    R.animator.slide_in_from_left, R.animator.slide_out_to_right);
-            transaction.replace(R.id.container, mFragment, FRAGMENT_TAG);
+            transaction.replace(R.id.container, fragment, FRAGMENT_TAG);
             transaction.addToBackStack(null);
             transaction.commit();
         }
     }
 
-    private BrowseFragment getBrowseFragment() {
-        return (BrowseFragment) getSupportFragmentManager().findFragmentByTag(FRAGMENT_TAG);
+    private BrowseDBFragment getBrowseFragment() {
+        return (BrowseDBFragment) getSupportFragmentManager().findFragmentByTag(FRAGMENT_TAG);
     }
 
     @Override
@@ -77,5 +97,9 @@ public class MainActivity extends AppCompatActivity implements BrowseFragment.Br
         transaction.replace(R.id.container, fragment, FRAGMENT_TAG);
         transaction.addToBackStack(null);
         transaction.commit();
+    }
+
+    private Context getContext() {
+        return this;
     }
 }

@@ -15,6 +15,7 @@ import java.util.List;
 
 
 public class BrowseContract {
+    public static final long ROOT_ID = -1;
 
     public static final String PATH = "browse";
     public static final String PATH_BY_PARENT = "browse_by_parent";

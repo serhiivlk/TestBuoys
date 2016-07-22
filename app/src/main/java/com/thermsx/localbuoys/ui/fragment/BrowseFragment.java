@@ -21,23 +21,13 @@ import com.thermsx.localbuoys.databinding.FragmentBrowseBinding;
 import com.thermsx.localbuoys.provider.table.BrowseContract;
 
 public class BrowseFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>, ItemListCursorAdapter.OnItemClickListener {
-    public static final String EXTRA_ITEM_ID = "com.thermsx.localbuoys.item_id";
-    private long mItemId;
+    private static final String ARG_ITEM_ID = "item_id";
 
     private ItemListCursorAdapter mAdapter;
 
     private BrowseFragmentListener mBrowseFragmentListener;
 
     private FragmentBrowseBinding mBinding;
-
-    public static BrowseFragment newInstance(long id) {
-        KLog.d("id: " + id);
-        Bundle args = new Bundle();
-        args.putLong(EXTRA_ITEM_ID, id);
-        BrowseFragment fragment = new BrowseFragment();
-        fragment.setArguments(args);
-        return fragment;
-    }
 
     @Override
     public void onAttach(Context context) {
@@ -56,8 +46,6 @@ public class BrowseFragment extends Fragment implements LoaderManager.LoaderCall
 
         mAdapter = new ItemListCursorAdapter(getContext(), null);
         mAdapter.setOnItemClickListener(this);
-
-        mItemId = getArguments().getLong(EXTRA_ITEM_ID);
     }
 
     @Nullable
@@ -81,12 +69,26 @@ public class BrowseFragment extends Fragment implements LoaderManager.LoaderCall
         getLoaderManager().initLoader(R.id.browse_loader, null, this);
     }
 
+    public long getItemId() {
+        Bundle arguments = getArguments();
+        if (arguments != null) {
+            return arguments.getLong(ARG_ITEM_ID);
+        }
+        return BrowseContract.ROOT_ID;
+    }
+
+    public void setItemId(long id) {
+        Bundle args = new Bundle(1);
+        args.putLong(ARG_ITEM_ID, id);
+        setArguments(args);
+    }
+
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         KLog.d();
         return new CursorLoader(
                 getContext(),
-                BrowseContract.buildUriWithParentId(mItemId),
+                BrowseContract.buildUriWithParentId(getItemId()),
                 null, null, null, null
         );
     }

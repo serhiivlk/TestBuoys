@@ -25,6 +25,7 @@ public class MainActivity extends AppCompatActivity implements BrowseFragment.Br
     private static final String FRAGMENT_TAG = "items_list_container";
 
     private static final String TAG = "MainActivity";
+    private static final String SAVED_ITEM_ID = "com.thermsx.localbuoys.ITEM_ID";
     private ProgressBar mProgressBar;
 
     @Override
@@ -32,7 +33,7 @@ public class MainActivity extends AppCompatActivity implements BrowseFragment.Br
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        initBrowseFragment();
+        initializeFromParams(savedInstanceState);
 
         mProgressBar = (ProgressBar) findViewById(R.id.progress);
 
@@ -67,14 +68,13 @@ public class MainActivity extends AppCompatActivity implements BrowseFragment.Br
         });
     }
 
-    private void initBrowseFragment() {
-        BrowseFragment fragment = getBrowseFragment();
-        if (fragment == null) {
-            fragment = BrowseFragment.newInstance(-1);
-            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-            transaction.replace(R.id.container, fragment, FRAGMENT_TAG);
-            transaction.commit();
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        long itemId = getItemId();
+        if (itemId != BrowseContract.ROOT_ID) {
+            outState.putLong(SAVED_ITEM_ID, itemId);
         }
+        super.onSaveInstanceState(outState);
     }
 
     private BrowseFragment getBrowseFragment() {
@@ -84,11 +84,39 @@ public class MainActivity extends AppCompatActivity implements BrowseFragment.Br
     @Override
     public void onItemSelected(View view, long id) {
         KLog.d("id: " + id);
-//        final BrowseFragment fragment = BrowseFragment.newInstance(id);
-//        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-//        transaction.replace(R.id.container, fragment, FRAGMENT_TAG);
-//        transaction.addToBackStack(null);
-//        transaction.commit();
+    }
+
+    protected void initializeFromParams(Bundle savedInstanceState) {
+        long itemId = BrowseContract.ROOT_ID;
+
+        if (savedInstanceState != null) {
+            itemId = savedInstanceState.getLong(SAVED_ITEM_ID);
+        }
+        navigateTo(itemId);
+    }
+
+    private void navigateTo(long itemId) {
+        KLog.d("id: " + itemId);
+
+        BrowseFragment fragment = getBrowseFragment();
+        if (fragment == null || fragment.getItemId() != itemId) {
+            fragment = new BrowseFragment();
+            fragment.setItemId(itemId);
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+            transaction.replace(R.id.container, fragment, FRAGMENT_TAG);
+            if (itemId > -1) {
+                transaction.addToBackStack(null);
+            }
+            transaction.commit();
+        }
+    }
+
+    private long getItemId() {
+        BrowseFragment fragment = getBrowseFragment();
+        if (fragment == null) {
+            return BrowseContract.ROOT_ID;
+        }
+        return fragment.getItemId();
     }
 
     private Context getContext() {

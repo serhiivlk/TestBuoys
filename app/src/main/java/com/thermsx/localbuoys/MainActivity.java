@@ -13,7 +13,7 @@ import com.thermsx.localbuoys.api.ApiFactory;
 import com.thermsx.localbuoys.api.LocalBuoyService;
 import com.thermsx.localbuoys.api.LocationListResponse;
 import com.thermsx.localbuoys.model.Item;
-import com.thermsx.localbuoys.provider.table.BrowseTable;
+import com.thermsx.localbuoys.provider.table.BrowseContract;
 import com.thermsx.localbuoys.ui.fragment.BrowseDBFragment;
 
 import retrofit2.Call;
@@ -44,13 +44,13 @@ public class MainActivity extends AppCompatActivity implements BrowseDBFragment.
                 LocationListResponse body = response.body();
                 KLog.d(body.getResultCodeName());
 
-                BrowseTable.clean(getContext());
+                BrowseContract.clean(getContext());
                 for (Item item : body.getItems().get(0).getItems()) {
-                    BrowseTable.insert(getContext(), item);
+                    BrowseContract.insert(getContext(), item);
                     if (item.getItems() != null) {
                         for (Item a : item.getItems()) {
                             if (a.isBrowsable()) {
-                                BrowseTable.insert(getContext(), a);
+                                BrowseContract.insert(getContext(), a);
                             }
                         }
                     }

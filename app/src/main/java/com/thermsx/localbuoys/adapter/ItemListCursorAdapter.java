@@ -9,7 +9,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.thermsx.localbuoys.model.Item;
-import com.thermsx.localbuoys.provider.table.BrowseTable;
+import com.thermsx.localbuoys.provider.table.BrowseContract;
 
 public class ItemListCursorAdapter extends CursorRecyclerViewAdapter<ItemListCursorAdapter.ItemViewHolder> {
 
@@ -26,7 +26,7 @@ public class ItemListCursorAdapter extends CursorRecyclerViewAdapter<ItemListCur
 
     @Override
     public void onBindViewHolder(ItemViewHolder holder, Cursor cursor) {
-        Item item = BrowseTable.fromCursor(cursor);
+        Item item = BrowseContract.fromCursor(cursor);
         holder.text.setText(item.getName());
     }
 

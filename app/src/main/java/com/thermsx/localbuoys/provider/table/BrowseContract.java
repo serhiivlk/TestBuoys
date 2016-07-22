@@ -1,19 +1,23 @@
 package com.thermsx.localbuoys.provider.table;
 
+import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.BaseColumns;
+import android.support.annotation.NonNull;
 
 import com.thermsx.localbuoys.model.Item;
 import com.thermsx.localbuoys.provider.LocalBuoysProvider;
 
+import java.util.List;
 
-public class BrowseTable {
+
+public class BrowseContract {
 
     public static final String PATH = "browse";
-    public static final String PATH_BY_PARENT = "browse_by_parent_id";
+    public static final String PATH_BY_PARENT = "browse_by_parent";
     public static final Uri CONTENT_URI =
             LocalBuoysProvider.BASE_CONTENT_URI.buildUpon().appendPath(PATH).build();
     public static final Uri CONTENT_URI_BY_PARENT_ID =
@@ -44,6 +48,14 @@ public class BrowseTable {
         values.put(Column.PARENT_ID, item.getParentId());
         values.put(Column.NAME, item.getName());
         return values;
+    }
+
+    public static Uri buildUriWithParentId(long itemId) {
+        return ContentUris.withAppendedId(CONTENT_URI_BY_PARENT_ID, itemId);
+    }
+
+    public static List<String> getParentId(@NonNull Uri uri) {
+        return uri.getPathSegments();
     }
 
     public interface Column {

@@ -1,6 +1,5 @@
 package com.thermsx.localbuoys.ui.fragment;
 
-import android.content.ContentUris;
 import android.database.Cursor;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
@@ -18,7 +17,7 @@ import com.socks.library.KLog;
 import com.thermsx.localbuoys.R;
 import com.thermsx.localbuoys.adapter.ItemListCursorAdapter;
 import com.thermsx.localbuoys.databinding.FragmentBrowseDbBinding;
-import com.thermsx.localbuoys.provider.table.BrowseTable;
+import com.thermsx.localbuoys.provider.table.BrowseContract;
 
 public class BrowseDBFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
     public static final String EXTRA_ITEM_ID = "com.thermsx.localbuoys.item_id";
@@ -72,7 +71,7 @@ public class BrowseDBFragment extends Fragment implements LoaderManager.LoaderCa
         KLog.d();
         return new CursorLoader(
                 getContext(),
-                ContentUris.withAppendedId(BrowseTable.CONTENT_URI_BY_PARENT_ID, mItemId),
+                BrowseContract.buildUriWithParentId(mItemId),
                 null, null, null, null
         );
     }

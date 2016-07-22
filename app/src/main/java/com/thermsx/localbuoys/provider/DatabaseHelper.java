@@ -4,7 +4,7 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-import com.thermsx.localbuoys.provider.table.BrowseTable;
+import com.thermsx.localbuoys.provider.table.BrowseContract;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String DB_NAME = "localbuoys.db";
@@ -21,11 +21,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
-        sqLiteDatabase.execSQL(BrowseTable.Request.TABLE_DROP);
+        sqLiteDatabase.execSQL(BrowseContract.Request.TABLE_DROP);
         onCreate(sqLiteDatabase);
     }
 
     private void createTables(SQLiteDatabase sqLiteDatabase) {
-        sqLiteDatabase.execSQL(BrowseTable.Request.TABLE_CREATE);
+        sqLiteDatabase.execSQL(BrowseContract.Request.TABLE_CREATE);
     }
 }

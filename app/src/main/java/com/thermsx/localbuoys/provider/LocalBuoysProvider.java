@@ -14,7 +14,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import com.socks.library.KLog;
-import com.thermsx.localbuoys.provider.table.BrowseTable;
+import com.thermsx.localbuoys.provider.table.BrowseContract;
 
 public class LocalBuoysProvider extends ContentProvider {
 
@@ -28,9 +28,9 @@ public class LocalBuoysProvider extends ContentProvider {
     private static final UriMatcher URI_MATCHER = new UriMatcher(UriMatcher.NO_MATCH);
 
     static {
-        URI_MATCHER.addURI(CONTENT_AUTHORITY, BrowseTable.PATH, BROWSE);
-        URI_MATCHER.addURI(CONTENT_AUTHORITY, BrowseTable.PATH + "/#", BROWSE_ID);
-        URI_MATCHER.addURI(CONTENT_AUTHORITY, BrowseTable.PATH_BY_PARENT + "/*", BROWSE_BY_PARENT);
+        URI_MATCHER.addURI(CONTENT_AUTHORITY, BrowseContract.PATH, BROWSE);
+        URI_MATCHER.addURI(CONTENT_AUTHORITY, BrowseContract.PATH + "/#", BROWSE_ID);
+        URI_MATCHER.addURI(CONTENT_AUTHORITY, BrowseContract.PATH_BY_PARENT + "/*", BROWSE_BY_PARENT);
     }
 
     private DatabaseHelper mDatabaseHelper;
@@ -49,13 +49,13 @@ public class LocalBuoysProvider extends ContentProvider {
         switch (URI_MATCHER.match(uri)) {
             case BROWSE:
                 KLog.d("URI browse match");
-                builder.setTables(BrowseTable.Request.TABLE_NAME);
+                builder.setTables(BrowseContract.Request.TABLE_NAME);
                 break;
             case BROWSE_BY_PARENT:
-                String id = uri.getPathSegments().get(1);
+                String id = BrowseContract.getParentId(uri).get(1);
                 KLog.d("URI browse by parent id " + id);
-                builder.setTables(BrowseTable.Request.TABLE_NAME);
-                builder.appendWhere(BrowseTable.Column.PARENT_ID + " = " + id);
+                builder.setTables(BrowseContract.Request.TABLE_NAME);
+                builder.appendWhere(BrowseContract.Column.PARENT_ID + " = " + id);
                 break;
             default:
                 throw new IllegalArgumentException("Unknown query URI " + uri);
@@ -78,7 +78,7 @@ public class LocalBuoysProvider extends ContentProvider {
         switch (URI_MATCHER.match(uri)) {
             case BROWSE:
                 KLog.d("URI browse match");
-                long rowId = mDatabaseHelper.getWritableDatabase().insert(BrowseTable.Request.TABLE_NAME, null, contentValues);
+                long rowId = mDatabaseHelper.getWritableDatabase().insert(BrowseContract.Request.TABLE_NAME, null, contentValues);
                 if (rowId > 0) {
                     Uri resultUri = ContentUris.withAppendedId(uri, rowId);
                     getContext().getContentResolver().notifyChange(resultUri, null);
@@ -95,7 +95,7 @@ public class LocalBuoysProvider extends ContentProvider {
     public int bulkInsert(@NonNull Uri uri, @NonNull ContentValues[] values) {
         switch (URI_MATCHER.match(uri)) {
             case BROWSE:
-                String sql = "INSERT INTO " + BrowseTable.Request.TABLE_NAME + " VALUES (?,?,?);";
+                String sql = "INSERT INTO " + BrowseContract.Request.TABLE_NAME + " VALUES (?,?,?);";
                 SQLiteDatabase database = mDatabaseHelper.getWritableDatabase();
                 SQLiteStatement statement = database.compileStatement(sql);
                 database.beginTransaction();
@@ -117,7 +117,7 @@ public class LocalBuoysProvider extends ContentProvider {
     public int delete(@NonNull Uri uri, String whereClause, String[] whereArgs) {
         switch (URI_MATCHER.match(uri)) {
             case BROWSE:
-                int count = mDatabaseHelper.getWritableDatabase().delete(BrowseTable.Request.TABLE_NAME, whereClause, whereArgs);
+                int count = mDatabaseHelper.getWritableDatabase().delete(BrowseContract.Request.TABLE_NAME, whereClause, whereArgs);
                 getContext().getContentResolver().notifyChange(uri, null);
                 return count;
             default:

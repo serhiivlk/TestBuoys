@@ -81,7 +81,8 @@ public class LocalBuoysProvider extends ContentProvider {
                 long rowId = mDatabaseHelper.getWritableDatabase().insert(BrowseContract.Request.TABLE_NAME, null, contentValues);
                 if (rowId > 0) {
                     Uri resultUri = ContentUris.withAppendedId(uri, rowId);
-                    getContext().getContentResolver().notifyChange(resultUri, null);
+                    getContext().getContentResolver().notifyChange(uri, null);
+                    getContext().getContentResolver().notifyChange(BrowseContract.CONTENT_URI_BY_PARENT_ID, null);
                     return resultUri;
                 } else {
                     throw new SQLException("Failed to add a record into " + uri);

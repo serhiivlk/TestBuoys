@@ -23,12 +23,14 @@ public class LocalBuoysProvider extends ContentProvider {
 
     private static final int BROWSE = 368;
     private static final int BROWSE_ID = 661;
+    private static final int BROWSE_BY_PARENT = 365;
 
     private static final UriMatcher URI_MATCHER = new UriMatcher(UriMatcher.NO_MATCH);
 
     static {
         URI_MATCHER.addURI(CONTENT_AUTHORITY, BrowseTable.PATH, BROWSE);
         URI_MATCHER.addURI(CONTENT_AUTHORITY, BrowseTable.PATH + "/#", BROWSE_ID);
+        URI_MATCHER.addURI(CONTENT_AUTHORITY, BrowseTable.PATH_BY_PARENT + "/*", BROWSE_BY_PARENT);
     }
 
     private DatabaseHelper mDatabaseHelper;
@@ -48,12 +50,19 @@ public class LocalBuoysProvider extends ContentProvider {
             case BROWSE:
                 KLog.d("URI browse match");
                 builder.setTables(BrowseTable.Request.TABLE_NAME);
-                Cursor cursor = builder.query(mDatabaseHelper.getReadableDatabase(), projection, selection, selectionArgs, null, null, sortOrder);
-                cursor.setNotificationUri(getContext().getContentResolver(), uri);
-                return cursor;
+                break;
+            case BROWSE_BY_PARENT:
+                String id = uri.getPathSegments().get(1);
+                KLog.d("URI browse by parent id " + id);
+                builder.setTables(BrowseTable.Request.TABLE_NAME);
+                builder.appendWhere(BrowseTable.Column.PARENT_ID + " = " + id);
+                break;
             default:
                 throw new IllegalArgumentException("Unknown query URI " + uri);
         }
+        Cursor cursor = builder.query(mDatabaseHelper.getReadableDatabase(), projection, selection, selectionArgs, null, null, sortOrder);
+        cursor.setNotificationUri(getContext().getContentResolver(), uri);
+        return cursor;
     }
 
     @Nullable

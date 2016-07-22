@@ -1,5 +1,6 @@
 package com.thermsx.localbuoys.ui.fragment;
 
+import android.content.ContentUris;
 import android.database.Cursor;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
@@ -58,6 +59,11 @@ public class BrowseDBFragment extends Fragment implements LoaderManager.LoaderCa
         mBinding.recycler.setLayoutManager(new LinearLayoutManager(getContext()));
         mBinding.recycler.setAdapter(mAdapter);
 
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
         getLoaderManager().initLoader(R.id.browse_loader, null, this);
     }
 
@@ -66,7 +72,7 @@ public class BrowseDBFragment extends Fragment implements LoaderManager.LoaderCa
         KLog.d();
         return new CursorLoader(
                 getContext(),
-                BrowseTable.CONTENT_URI,
+                ContentUris.withAppendedId(BrowseTable.CONTENT_URI_BY_PARENT_ID, mItemId),
                 null, null, null, null
         );
     }
@@ -80,5 +86,9 @@ public class BrowseDBFragment extends Fragment implements LoaderManager.LoaderCa
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
         KLog.d();
+    }
+
+    public interface BrowseFragmentListener {
+        void onItemSelected(View view, long id);
     }
 }

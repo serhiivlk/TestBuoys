@@ -15,18 +15,16 @@ import com.thermsx.localbuoys.api.LocationListResponse;
 import com.thermsx.localbuoys.model.Item;
 import com.thermsx.localbuoys.provider.table.BrowseTable;
 import com.thermsx.localbuoys.ui.fragment.BrowseDBFragment;
-import com.thermsx.localbuoys.ui.fragment.BrowseFragment;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class MainActivity extends AppCompatActivity implements BrowseFragment.BrowseFragmentListener {
+public class MainActivity extends AppCompatActivity implements BrowseDBFragment.BrowseFragmentListener {
     private static final String FRAGMENT_TAG = "items_list_cantainer";
 
     private static final String TAG = "MainActivity";
     private ProgressBar mProgressBar;
-//    private BrowseFragment mFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,12 +44,18 @@ public class MainActivity extends AppCompatActivity implements BrowseFragment.Br
                 LocationListResponse body = response.body();
                 KLog.d(body.getResultCodeName());
 
-                BrowseTable.crean(getContext());
+                BrowseTable.clean(getContext());
                 for (Item item : body.getItems().get(0).getItems()) {
                     BrowseTable.insert(getContext(), item);
+                    if (item.getItems() != null) {
+                        for (Item a : item.getItems()) {
+                            if (a.isBrowsable()) {
+                                BrowseTable.insert(getContext(), a);
+                            }
+                        }
+                    }
                 }
 
-//                mFragment.setList(body.getItems().get(0).getItems());
             }
 
             @Override
@@ -63,23 +67,11 @@ public class MainActivity extends AppCompatActivity implements BrowseFragment.Br
     }
 
     private void initBrowseFragment() {
-//        mFragment = getBrowseFragment();
-//        if (mFragment == null) {
-//            mFragment = new BrowseFragment();
-//            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-////            transaction.setCustomAnimations(
-////                    R.animator.slide_in_from_right, R.animator.slide_out_to_left,
-////                    R.animator.slide_in_from_left, R.animator.slide_out_to_right);
-//            transaction.replace(R.id.container, mFragment, FRAGMENT_TAG);
-//            transaction.addToBackStack(null);
-//            transaction.commit();
-//        }
         BrowseDBFragment fragment = getBrowseFragment();
         if (fragment == null) {
             fragment = BrowseDBFragment.newInstance(-1);
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
             transaction.replace(R.id.container, fragment, FRAGMENT_TAG);
-            transaction.addToBackStack(null);
             transaction.commit();
         }
     }
@@ -89,10 +81,9 @@ public class MainActivity extends AppCompatActivity implements BrowseFragment.Br
     }
 
     @Override
-    public void onItemSelected(Item item) {
-        Log.d(TAG, "onItemSelected: " + item.getName());
-        final BrowseFragment fragment = new BrowseFragment();
-        fragment.setList(item.getItems());
+    public void onItemSelected(View view, long id) {
+        KLog.d("id: " + id);
+        final BrowseDBFragment fragment = BrowseDBFragment.newInstance(id);
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.container, fragment, FRAGMENT_TAG);
         transaction.addToBackStack(null);
@@ -102,4 +93,6 @@ public class MainActivity extends AppCompatActivity implements BrowseFragment.Br
     private Context getContext() {
         return this;
     }
+
+
 }

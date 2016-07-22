@@ -19,6 +19,10 @@ public class Item {
     @SerializedName("Items")
     private List<Item> mItems;
 
+    public boolean isBrowsable() {
+        return mType != TYPE_ITEM;
+    }
+
     public long getLocationId() {
         return mLocationId;
     }

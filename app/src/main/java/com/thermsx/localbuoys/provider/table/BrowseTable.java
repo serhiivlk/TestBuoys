@@ -13,14 +13,17 @@ import com.thermsx.localbuoys.provider.LocalBuoysProvider;
 public class BrowseTable {
 
     public static final String PATH = "browse";
+    public static final String PATH_BY_PARENT = "browse_by_parent_id";
     public static final Uri CONTENT_URI =
             LocalBuoysProvider.BASE_CONTENT_URI.buildUpon().appendPath(PATH).build();
+    public static final Uri CONTENT_URI_BY_PARENT_ID =
+            LocalBuoysProvider.BASE_CONTENT_URI.buildUpon().appendPath(PATH_BY_PARENT).build();
 
     public static Uri insert(Context context, Item item) {
         return context.getContentResolver().insert(CONTENT_URI, toContentValues(item));
     }
 
-    public static int crean(Context context) {
+    public static int clean(Context context) {
         return context.getContentResolver().delete(CONTENT_URI, null, null);
     }
 

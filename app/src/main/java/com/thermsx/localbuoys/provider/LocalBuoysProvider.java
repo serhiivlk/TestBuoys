@@ -74,10 +74,10 @@ public class LocalBuoysProvider extends ContentProvider {
     @Nullable
     @Override
     public Uri insert(@NonNull Uri uri, ContentValues contentValues) {
-        KLog.d(uri);
+//        KLog.d(uri);
         switch (URI_MATCHER.match(uri)) {
             case BROWSE:
-                KLog.d("URI browse match");
+//                KLog.d("URI browse match");
                 long rowId = mDatabaseHelper.getWritableDatabase().insert(BrowseContract.Request.TABLE_NAME, null, contentValues);
                 if (rowId > 0) {
                     Uri resultUri = ContentUris.withAppendedId(uri, rowId);

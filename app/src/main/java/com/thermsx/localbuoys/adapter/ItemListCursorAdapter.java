@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.socks.library.KLog;
 import com.thermsx.localbuoys.R;
 import com.thermsx.localbuoys.databinding.ListItemBrowseBinding;
 import com.thermsx.localbuoys.model.Item;
@@ -53,6 +54,7 @@ public class ItemListCursorAdapter extends CursorRecyclerViewAdapter<ItemListCur
 
         @Override
         public void onClick(View view) {
+            KLog.d();
             if (mOnItemClickListener != null) {
                 mOnItemClickListener.onItemClick(view, getLayoutPosition(), binding.getItem());
             }

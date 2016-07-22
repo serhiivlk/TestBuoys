@@ -2,4 +2,6 @@
 <resources>
     <item name="browse_loader"
           type="id"/>
+    <item name="toolbar"
+          type="id"/>
 </resources>

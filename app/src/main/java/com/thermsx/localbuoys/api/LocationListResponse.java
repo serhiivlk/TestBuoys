@@ -13,6 +13,13 @@ public class LocationListResponse {
     @SerializedName("ResultCodeName")
     private String mResultCodeName;
 
+    public Item getRootItem() {
+        if (mItems != null && mItems.size() > 0) {
+            return mItems.get(0);
+        }
+        return null;
+    }
+
     public List<Item> getItems() {
         return mItems;
     }

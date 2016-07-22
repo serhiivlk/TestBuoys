@@ -1,14 +1,15 @@
 package com.thermsx.localbuoys.ui.fragment;
 
+import android.app.Activity;
+import android.app.Fragment;
+import android.app.LoaderManager;
 import android.content.Context;
+import android.content.CursorLoader;
+import android.content.Loader;
 import android.database.Cursor;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.CursorLoader;
-import android.support.v4.content.Loader;
 import android.support.v7.widget.LinearLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -33,19 +34,33 @@ public class BrowseFragment extends Fragment implements LoaderManager.LoaderCall
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        try {
-            mBrowseFragmentListener = (BrowseFragmentListener) context;
-        } catch (ClassCastException ex) {
-            throw new ClassCastException("TVBrowseFragment can only be attached to an activity that " +
-                    "implements MediaFragmentListener");
-        }
+        KLog.d("context");
+//        try {
+//            mBrowseFragmentListener = (BrowseFragmentListener) context;
+//        } catch (ClassCastException ex) {
+//            throw new ClassCastException("TVBrowseFragment can only be attached to an activity that " +
+//                    "implements MediaFragmentListener");
+//        }
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        KLog.d("activity");
     }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mAdapter = new ItemListCursorAdapter(getContext(), null);
+        try {
+            mBrowseFragmentListener = (BrowseFragmentListener) getActivity();
+        } catch (ClassCastException ex) {
+            throw new ClassCastException("TVBrowseFragment can only be attached to an activity that " +
+                    "implements MediaFragmentListener");
+        }
+
+        mAdapter = new ItemListCursorAdapter(getActivity(), null);
         mAdapter.setOnItemClickListener(this);
     }
 
@@ -59,7 +74,7 @@ public class BrowseFragment extends Fragment implements LoaderManager.LoaderCall
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         mBinding.recycler.setHasFixedSize(true);
-        mBinding.recycler.setLayoutManager(new LinearLayoutManager(getContext()));
+        mBinding.recycler.setLayoutManager(new LinearLayoutManager(getActivity()));
         mBinding.recycler.setAdapter(mAdapter);
 
     }
@@ -88,7 +103,7 @@ public class BrowseFragment extends Fragment implements LoaderManager.LoaderCall
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         KLog.d();
         return new CursorLoader(
-                getContext(),
+                getActivity(),
                 BrowseContract.buildUriWithParentId(getItemId()),
                 null, null, null, null
         );
@@ -107,6 +122,7 @@ public class BrowseFragment extends Fragment implements LoaderManager.LoaderCall
 
     @Override
     public void onItemClick(View view, int position, Item item) {
+        KLog.d();
         if (mBrowseFragmentListener != null) {
             mBrowseFragmentListener.onItemSelected(view, item);
         }

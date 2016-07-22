@@ -35,6 +35,7 @@ dependencies {
     testCompile 'junit:junit:4.12'
     compile 'com.android.support:appcompat-v7:' + supportLibraryVersion
     compile 'com.android.support:recyclerview-v7:' + supportLibraryVersion
+    compile 'com.android.support:design:' + supportLibraryVersion
     compile 'com.squareup.retrofit2:retrofit:' + retrofitVersion
     compile 'com.squareup.retrofit2:converter-gson:' + retrofitVersion
     compile 'com.squareup.okhttp3:logging-interceptor:3.4.1'

@@ -1,9 +1,8 @@
 package com.thermsx.localbuoys.ui.activity;
 
+import android.app.FragmentTransaction;
 import android.content.Context;
 import android.os.Bundle;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
@@ -21,7 +20,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class MainActivity extends AppCompatActivity implements BrowseFragment.BrowseFragmentListener {
+public class MainActivity extends ToolbarActivity implements BrowseFragment.BrowseFragmentListener {
     private static final String FRAGMENT_TAG = "items_list_container";
 
     private static final String TAG = "MainActivity";
@@ -33,6 +32,7 @@ public class MainActivity extends AppCompatActivity implements BrowseFragment.Br
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        initializeToolbar();
         initializeFromParams(savedInstanceState);
 
         mProgressBar = (ProgressBar) findViewById(R.id.progress);
@@ -46,16 +46,12 @@ public class MainActivity extends AppCompatActivity implements BrowseFragment.Br
                 LocationListResponse body = response.body();
                 KLog.d(body.getResultCodeName());
 
-                BrowseContract.clean(getContext());
-                for (Item item : body.getItems().get(0).getItems()) {
-                    BrowseContract.insert(getContext(), item);
-                    if (item.getItems() != null) {
-                        for (Item a : item.getItems()) {
-                            BrowseContract.insert(getContext(), a);
-                        }
-                    }
-                }
-
+                long start = System.currentTimeMillis();
+//                BrowseContract.clean(getContext());
+                KLog.d("cleaning time: " + (System.currentTimeMillis() - start));
+                start = System.currentTimeMillis();
+//                BrowseContract.saveHierarchy(getContext(), body.getRootItem());
+                KLog.d("inserting time: " + (System.currentTimeMillis() - start));
             }
 
             @Override
@@ -76,7 +72,7 @@ public class MainActivity extends AppCompatActivity implements BrowseFragment.Br
     }
 
     private BrowseFragment getBrowseFragment() {
-        return (BrowseFragment) getSupportFragmentManager().findFragmentByTag(FRAGMENT_TAG);
+        return (BrowseFragment) getFragmentManager().findFragmentByTag(FRAGMENT_TAG);
     }
 
     @Override
@@ -104,7 +100,10 @@ public class MainActivity extends AppCompatActivity implements BrowseFragment.Br
         if (fragment == null || fragment.getItemId() != itemId) {
             fragment = new BrowseFragment();
             fragment.setItemId(itemId);
-            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+            FragmentTransaction transaction = getFragmentManager().beginTransaction();
+            transaction.setCustomAnimations(
+                    R.animator.slide_in_from_right, R.animator.slide_out_to_left,
+                    R.animator.slide_in_from_left, R.animator.slide_out_to_right);
             transaction.replace(R.id.container, fragment, FRAGMENT_TAG);
             if (itemId > -1) {
                 transaction.addToBackStack(null);

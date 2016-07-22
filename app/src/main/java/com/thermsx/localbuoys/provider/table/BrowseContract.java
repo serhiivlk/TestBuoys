@@ -29,6 +29,21 @@ public class BrowseContract {
         return context.getContentResolver().insert(CONTENT_URI, toContentValues(item));
     }
 
+    public static void saveHierarchy(Context context, Item rootItem) {
+        if (!isRoot(rootItem)) {
+            insert(context, rootItem);
+        }
+        if (rootItem.getItems() != null) {
+            for (Item item : rootItem.getItems()) {
+                saveHierarchy(context, item);
+            }
+        }
+    }
+
+    public static boolean isRoot(Item item) {
+        return item.getLocationId() == ROOT_ID;
+    }
+
     public static int clean(Context context) {
         return context.getContentResolver().delete(CONTENT_URI, null, null);
     }

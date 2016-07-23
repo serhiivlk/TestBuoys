@@ -61,11 +61,29 @@ public class BrowseContract {
         int parentIdIndex = cursor.getColumnIndex(Column.PARENT_ID);
         int nameIndex = cursor.getColumnIndex(Column.NAME);
         int typeIndex = cursor.getColumnIndex(Column.ITEM_TYPE);
+        int visibleBuoysIndex = cursor.getColumnIndex(Column.VISIBLE_ON_BUOYS);
+        int visibleWeatherForecastIndex =
+                cursor.getColumnIndex(Column.VISIBLE_ON_WEATHER_FORECAST);
+        int visibleMarineForecastIndex =
+                cursor.getColumnIndex(Column.VISIBLE_ON_MARINE_FORECAST);
+        int visibleTidesIndex = cursor.getColumnIndex(Column.VISIBLE_ON_TIDES);
+        int visibleMoonPhasesIndex = cursor.getColumnIndex(Column.VISIBLE_ON_MOON_PHASES);
+        int visibleRadarIndex = cursor.getColumnIndex(Column.VISIBLE_ON_RADAR);
+        int visibleWavewatchIndex = cursor.getColumnIndex(Column.VISIBLE_ON_WAVEWATCH);
+        int visibleSurfaceTempIndex = cursor.getColumnIndex(Column.VISIBLE_ON_SEA_SURFACE_TEMP);
         Item item = new Item();
         item.setLocationId(cursor.getLong(locationIdIndex));
         item.setParentId(cursor.getLong(parentIdIndex));
         item.setType(cursor.getInt(typeIndex));
         item.setName(cursor.getString(nameIndex));
+        item.setVisibleOnBuoys(cursor.getInt(visibleBuoysIndex) == 1);
+        item.setVisibleOnWeatherForecast(cursor.getInt(visibleWeatherForecastIndex) == 1);
+        item.setVisibleOnMarineForecast(cursor.getInt(visibleMarineForecastIndex) == 1);
+        item.setVisibleOnTides(cursor.getInt(visibleTidesIndex) == 1);
+        item.setVisibleOnMoonPhases(cursor.getInt(visibleMoonPhasesIndex) == 1);
+        item.setVisibleOnRadar(cursor.getInt(visibleRadarIndex) == 1);
+        item.setVisibleOnWavewatch(cursor.getInt(visibleWavewatchIndex) == 1);
+        item.setVisibleOnSeaSurfaceTemp(cursor.getInt(visibleSurfaceTempIndex) == 1);
         return item;
     }
 
@@ -75,6 +93,14 @@ public class BrowseContract {
         values.put(Column.PARENT_ID, item.getParentId());
         values.put(Column.ITEM_TYPE, item.getType());
         values.put(Column.NAME, item.getName());
+        values.put(Column.VISIBLE_ON_BUOYS, item.isVisibleOnBuoys() ? 1 : 0);
+        values.put(Column.VISIBLE_ON_WEATHER_FORECAST, item.isVisibleOnWeatherForecast() ? 1 : 0);
+        values.put(Column.VISIBLE_ON_MARINE_FORECAST, item.isVisibleOnMarineForecast() ? 1 : 0);
+        values.put(Column.VISIBLE_ON_TIDES, item.isVisibleOnTides() ? 1 : 0);
+        values.put(Column.VISIBLE_ON_MOON_PHASES, item.isVisibleOnMoonPhases() ? 1 : 0);
+        values.put(Column.VISIBLE_ON_RADAR, item.isVisibleOnRadar() ? 1 : 0);
+        values.put(Column.VISIBLE_ON_WAVEWATCH, item.isVisibleOnWavewatch() ? 1 : 0);
+        values.put(Column.VISIBLE_ON_SEA_SURFACE_TEMP, item.isVisibleOnSeaSurfaceTemp() ? 1 : 0);
         return values;
     }
 
@@ -91,6 +117,14 @@ public class BrowseContract {
         String PARENT_ID = "parent_id";
         String NAME = "name";
         String ITEM_TYPE = "item_type";
+        String VISIBLE_ON_BUOYS = "visible_on_buoys";
+        String VISIBLE_ON_WEATHER_FORECAST = "visible_on_weather_forecast";
+        String VISIBLE_ON_MARINE_FORECAST = "visible_on_marine_forecast";
+        String VISIBLE_ON_TIDES = "visible_on_tides";
+        String VISIBLE_ON_MOON_PHASES = "visible_on_moon_phases";
+        String VISIBLE_ON_RADAR = "visible_on_radar";
+        String VISIBLE_ON_WAVEWATCH = "visible_on_wavewatch";
+        String VISIBLE_ON_SEA_SURFACE_TEMP = "visible_on_sea_surface_temp";
     }
 
     public interface Request {
@@ -100,7 +134,15 @@ public class BrowseContract {
                 Column.LOCATION_ID + " INTEGER PRIMARY KEY, " +
                 Column.PARENT_ID + " INTEGER, " +
                 Column.ITEM_TYPE + " INTEGER, " +
-                Column.NAME + " TEXT)";
+                Column.NAME + " TEXT," +
+                Column.VISIBLE_ON_BUOYS + " INTEGER, " +
+                Column.VISIBLE_ON_WEATHER_FORECAST + " INTEGER, " +
+                Column.VISIBLE_ON_MARINE_FORECAST + " INTEGER, " +
+                Column.VISIBLE_ON_TIDES + " INTEGER, " +
+                Column.VISIBLE_ON_MOON_PHASES + " INTEGER, " +
+                Column.VISIBLE_ON_RADAR + " INTEGER, " +
+                Column.VISIBLE_ON_WAVEWATCH + " INTEGER, " +
+                Column.VISIBLE_ON_SEA_SURFACE_TEMP + " INTEGER)";
 
         String TABLE_DROP = "DROP TABLE IF EXIST " + TABLE_NAME;
     }

@@ -8,7 +8,6 @@ import android.net.Uri;
 import android.provider.BaseColumns;
 import android.support.annotation.NonNull;
 
-import com.socks.library.KLog;
 import com.thermsx.localbuoys.model.Item;
 import com.thermsx.localbuoys.provider.LocalBuoysProvider;
 
@@ -32,15 +31,12 @@ public class BrowseContract {
     }
 
     public static void saveHierarchy(Context context, Item rootItem) {
-        long start = System.currentTimeMillis();
         List<Item> items = getFromHierarchy(rootItem);
         List<ContentValues> values = new ArrayList<>(items.size());
         for (Item item : items) {
             values.add(toContentValues(item));
         }
-        long end = System.currentTimeMillis();
         ContentValues[] valuesArray = values.toArray(new ContentValues[values.size()]);
-        KLog.d("converting time: " + (end - start) + "; size: " + valuesArray.length);
         context.getContentResolver()
                 .bulkInsert(CONTENT_URI, valuesArray);
     }

@@ -4,4 +4,6 @@
           type="id"/>
     <item name="toolbar"
           type="id"/>
+    <item name="load_data_loader"
+          type="id"/>
 </resources>

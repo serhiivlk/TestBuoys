@@ -1,33 +1,28 @@
 package com.thermsx.localbuoys.ui.activity;
 
 import android.app.FragmentTransaction;
+import android.app.LoaderManager;
 import android.content.Context;
+import android.content.Loader;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Toast;
 
 import com.socks.library.KLog;
 import com.thermsx.localbuoys.R;
-import com.thermsx.localbuoys.api.ApiFactory;
-import com.thermsx.localbuoys.api.LocalBuoyService;
-import com.thermsx.localbuoys.api.LocationListResponse;
 import com.thermsx.localbuoys.databinding.ActivityMainBinding;
+import com.thermsx.localbuoys.loader.DataLoader;
 import com.thermsx.localbuoys.model.Item;
 import com.thermsx.localbuoys.provider.table.BrowseContract;
 import com.thermsx.localbuoys.ui.fragment.BrowseFragment;
 
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-
-public class MainActivity extends ToolbarActivity implements BrowseFragment.BrowseFragmentListener {
-    private static final String TAG = "MainActivity";
-
+public class MainActivity extends ToolbarActivity implements BrowseFragment.BrowseFragmentListener, LoaderManager.LoaderCallbacks<String> {
     private static final String FRAGMENT_TAG = "items_list_container";
     private static final String SAVED_ITEM_ID = "com.thermsx.localbuoys.ITEM_ID";
+    private static final String SAVED_IS_LOADING = "com.thermsx.localbuoys.IS_LOADING";
 
     private ActivityMainBinding mBinding;
+    private boolean mIsLoading = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,6 +31,8 @@ public class MainActivity extends ToolbarActivity implements BrowseFragment.Brow
 
         initializeToolbar();
         initializeFromParams(savedInstanceState);
+
+        getLoaderManager().initLoader(R.id.load_data_loader, null, this);
     }
 
     @Override
@@ -44,6 +41,7 @@ public class MainActivity extends ToolbarActivity implements BrowseFragment.Brow
         if (itemId != BrowseContract.ROOT_ID) {
             outState.putLong(SAVED_ITEM_ID, itemId);
         }
+        outState.putBoolean(SAVED_IS_LOADING, mIsLoading);
         super.onSaveInstanceState(outState);
     }
 
@@ -69,36 +67,22 @@ public class MainActivity extends ToolbarActivity implements BrowseFragment.Brow
         setTitle(title);
     }
 
-    private void loadData() {
-        mBinding.setIsLoading(true);
-        LocalBuoyService service = ApiFactory.getService();
-        Call<LocationListResponse> call = service.getLocationList();
-        call.enqueue(new Callback<LocationListResponse>() {
-            @Override
-            public void onResponse(Call<LocationListResponse> call, Response<LocationListResponse> response) {
-                mBinding.setIsLoading(false);
-                LocationListResponse body = response.body();
-                KLog.d(body.getResultCodeName());
+    private boolean isLoading() {
+        return mIsLoading;
+    }
 
-                BrowseContract.saveHierarchy(getContext(), body.getRootItem());
-            }
-
-            @Override
-            public void onFailure(Call<LocationListResponse> call, Throwable t) {
-                mBinding.setIsLoading(false);
-                KLog.e(t);
-                Toast.makeText(MainActivity.this, t.getMessage(), Toast.LENGTH_SHORT).show();
-            }
-        });
+    private void setLoading(final boolean isLoading) {
+        mIsLoading = isLoading;
+        mBinding.setIsLoading(mIsLoading);
     }
 
     protected void initializeFromParams(Bundle savedInstanceState) {
         long itemId = BrowseContract.ROOT_ID;
 
         if (savedInstanceState != null) {
-            itemId = savedInstanceState.getLong(SAVED_ITEM_ID);
-        } else {
-            loadData();
+            itemId = savedInstanceState.getLong(SAVED_ITEM_ID, BrowseContract.ROOT_ID);
+            boolean loading = savedInstanceState.getBoolean(SAVED_IS_LOADING, false);
+            setLoading(loading);
         }
         navigateTo(itemId);
         updateToolbar();
@@ -135,5 +119,20 @@ public class MainActivity extends ToolbarActivity implements BrowseFragment.Brow
         return this;
     }
 
+    @Override
+    public Loader<String> onCreateLoader(int id, Bundle args) {
+        setLoading(true);
+        return new DataLoader(this);
+    }
 
+    @Override
+    public void onLoadFinished(Loader<String> loader, String data) {
+        setLoading(false);
+        KLog.d(data);
+    }
+
+    @Override
+    public void onLoaderReset(Loader<String> loader) {
+
+    }
 }

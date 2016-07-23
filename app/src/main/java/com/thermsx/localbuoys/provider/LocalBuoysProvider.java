@@ -96,11 +96,13 @@ public class LocalBuoysProvider extends ContentProvider {
     public int bulkInsert(@NonNull Uri uri, @NonNull ContentValues[] values) {
         switch (URI_MATCHER.match(uri)) {
             case BROWSE:
+                int count = 0;
                 String sql = "INSERT INTO " + BrowseContract.Request.TABLE_NAME + " VALUES (?,?,?);";
                 SQLiteDatabase database = mDatabaseHelper.getWritableDatabase();
                 SQLiteStatement statement = database.compileStatement(sql);
                 database.beginTransaction();
                 for (int i = 0; i < values.length; i++) {
+                    count++;
                     statement.clearBindings();
                     statement.bindLong(1, i);
                     statement.bindLong(2, i);

@@ -17,7 +17,7 @@ android {
 
         vectorDrawables.useSupportLibrary = true
 
-        buildConfigField 'String', 'API_URL', '"http://localbuoywebserver.staturedev.com/api/MobileApi/"'
+        buildConfigField("String", "API_URL", "\"${api_url}\"")
     }
     buildTypes {
         release {
@@ -28,16 +28,13 @@ android {
 }
 
 dependencies {
-    def supportLibraryVersion = '24.1.0'
-    def retrofitVersion = '2.1.0'
-
     compile fileTree(include: ['*.jar'], dir: 'libs')
     testCompile 'junit:junit:4.12'
-    compile 'com.android.support:appcompat-v7:' + supportLibraryVersion
-    compile 'com.android.support:recyclerview-v7:' + supportLibraryVersion
-    compile 'com.android.support:design:' + supportLibraryVersion
-    compile 'com.squareup.retrofit2:retrofit:' + retrofitVersion
-    compile 'com.squareup.retrofit2:converter-gson:' + retrofitVersion
+    compile "com.android.support:appcompat-v7:${support_library_version}"
+    compile "com.android.support:recyclerview-v7:${support_library_version}"
+    compile "com.android.support:design:${support_library_version}"
+    compile "com.squareup.retrofit2:retrofit:${retrofit_version}"
+    compile "com.squareup.retrofit2:converter-gson:${retrofit_version}"
     compile 'com.squareup.okhttp3:logging-interceptor:3.4.1'
     compile 'com.github.zhaokaiqiang.klog:library:1.5.0'
 }

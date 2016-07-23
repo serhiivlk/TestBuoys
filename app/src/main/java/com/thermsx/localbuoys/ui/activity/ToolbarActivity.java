@@ -3,11 +3,32 @@ package com.thermsx.localbuoys.ui.activity;
 import android.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
 
 import com.thermsx.localbuoys.R;
 
 public abstract class ToolbarActivity extends AppCompatActivity {
+    private final FragmentManager.OnBackStackChangedListener mBackStackChangedListener = new FragmentManager.OnBackStackChangedListener() {
+        @Override
+        public void onBackStackChanged() {
+            updateToolbar();
+        }
+    };
     private Toolbar mToolbar;
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        getFragmentManager().addOnBackStackChangedListener(mBackStackChangedListener);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        getFragmentManager().removeOnBackStackChangedListener(mBackStackChangedListener);
+    }
 
     protected void updateToolbar() {
         boolean isRoot = getFragmentManager().getBackStackEntryCount() == 0;
@@ -38,6 +59,15 @@ public abstract class ToolbarActivity extends AppCompatActivity {
     public void setTitle(int titleId) {
         super.setTitle(titleId);
         mToolbar.setTitle(titleId);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item != null && item.getItemId() == android.R.id.home) {
+            onBackPressed();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override

@@ -35,12 +35,12 @@ public class BrowseFragment extends Fragment implements LoaderManager.LoaderCall
     public void onAttach(Context context) {
         super.onAttach(context);
         KLog.d("context");
-//        try {
-//            mBrowseFragmentListener = (BrowseFragmentListener) context;
-//        } catch (ClassCastException ex) {
-//            throw new ClassCastException("TVBrowseFragment can only be attached to an activity that " +
-//                    "implements MediaFragmentListener");
-//        }
+        try {
+            mBrowseFragmentListener = (BrowseFragmentListener) context;
+        } catch (ClassCastException ex) {
+            throw new ClassCastException("TVBrowseFragment can only be attached to an activity that " +
+                    "implements MediaFragmentListener");
+        }
     }
 
     @Override
@@ -53,12 +53,12 @@ public class BrowseFragment extends Fragment implements LoaderManager.LoaderCall
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        try {
-            mBrowseFragmentListener = (BrowseFragmentListener) getActivity();
-        } catch (ClassCastException ex) {
-            throw new ClassCastException("TVBrowseFragment can only be attached to an activity that " +
-                    "implements MediaFragmentListener");
-        }
+//        try {
+//            mBrowseFragmentListener = (BrowseFragmentListener) getActivity();
+//        } catch (ClassCastException ex) {
+//            throw new ClassCastException("TVBrowseFragment can only be attached to an activity that " +
+//                    "implements MediaFragmentListener");
+//        }
 
         mAdapter = new ItemListCursorAdapter(getActivity(), null);
         mAdapter.setOnItemClickListener(this);
@@ -130,5 +130,7 @@ public class BrowseFragment extends Fragment implements LoaderManager.LoaderCall
 
     public interface BrowseFragmentListener {
         void onItemSelected(View view, Item item);
+
+        void setToolbarTitle(CharSequence title);
     }
 }

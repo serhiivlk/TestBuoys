@@ -2,16 +2,17 @@ package com.thermsx.localbuoys.ui.activity;
 
 import android.app.FragmentTransaction;
 import android.content.Context;
+import android.databinding.DataBindingUtil;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
-import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import com.socks.library.KLog;
 import com.thermsx.localbuoys.R;
 import com.thermsx.localbuoys.api.ApiFactory;
 import com.thermsx.localbuoys.api.LocalBuoyService;
 import com.thermsx.localbuoys.api.LocationListResponse;
+import com.thermsx.localbuoys.databinding.ActivityMainBinding;
 import com.thermsx.localbuoys.model.Item;
 import com.thermsx.localbuoys.provider.table.BrowseContract;
 import com.thermsx.localbuoys.ui.fragment.BrowseFragment;
@@ -21,45 +22,48 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class MainActivity extends ToolbarActivity implements BrowseFragment.BrowseFragmentListener {
-    private static final String FRAGMENT_TAG = "items_list_container";
-
     private static final String TAG = "MainActivity";
+
+    private static final String FRAGMENT_TAG = "items_list_container";
     private static final String SAVED_ITEM_ID = "com.thermsx.localbuoys.ITEM_ID";
-    private ProgressBar mProgressBar;
+
+    private ActivityMainBinding mBinding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        mBinding = DataBindingUtil.setContentView(this, R.layout.activity_main);
 
         initializeToolbar();
         initializeFromParams(savedInstanceState);
 
-        mProgressBar = (ProgressBar) findViewById(R.id.progress);
+        if (savedInstanceState == null) {
+            mBinding.setIsLoading(true);
+            LocalBuoyService service = ApiFactory.getService();
+            Call<LocationListResponse> call = service.getLocationList();
+            call.enqueue(new Callback<LocationListResponse>() {
+                @Override
+                public void onResponse(Call<LocationListResponse> call, Response<LocationListResponse> response) {
+                    mBinding.setIsLoading(false);
+                    LocationListResponse body = response.body();
+                    KLog.d(body.getResultCodeName());
 
-        LocalBuoyService service = ApiFactory.getService();
-        Call<LocationListResponse> call = service.getLocationList();
-        call.enqueue(new Callback<LocationListResponse>() {
-            @Override
-            public void onResponse(Call<LocationListResponse> call, Response<LocationListResponse> response) {
-                mProgressBar.setVisibility(View.GONE);
-                LocationListResponse body = response.body();
-                KLog.d(body.getResultCodeName());
-
-                long start = System.currentTimeMillis();
+                    long start = System.currentTimeMillis();
 //                BrowseContract.clean(getContext());
-                KLog.d("cleaning time: " + (System.currentTimeMillis() - start));
-                start = System.currentTimeMillis();
+                    KLog.d("cleaning time: " + (System.currentTimeMillis() - start));
+                    start = System.currentTimeMillis();
 //                BrowseContract.saveHierarchy(getContext(), body.getRootItem());
-                KLog.d("inserting time: " + (System.currentTimeMillis() - start));
-            }
+                    KLog.d("inserting time: " + (System.currentTimeMillis() - start));
+                }
 
-            @Override
-            public void onFailure(Call<LocationListResponse> call, Throwable t) {
-                mProgressBar.setVisibility(View.GONE);
-                Log.e(TAG, "onFailure: ", t);
-            }
-        });
+                @Override
+                public void onFailure(Call<LocationListResponse> call, Throwable t) {
+                    mBinding.setIsLoading(false);
+                    KLog.e(t);
+                    Toast.makeText(MainActivity.this, t.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
     }
 
     @Override
@@ -82,6 +86,15 @@ public class MainActivity extends ToolbarActivity implements BrowseFragment.Brow
         if (item.isBrowsable()) {
             navigateTo(id);
         }
+    }
+
+    @Override
+    public void setToolbarTitle(CharSequence title) {
+        KLog.d(title);
+        if (title == null) {
+            title = getString(R.string.app_name);
+        }
+        setTitle(title);
     }
 
     protected void initializeFromParams(Bundle savedInstanceState) {

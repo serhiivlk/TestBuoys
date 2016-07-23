@@ -36,34 +36,6 @@ public class MainActivity extends ToolbarActivity implements BrowseFragment.Brow
 
         initializeToolbar();
         initializeFromParams(savedInstanceState);
-
-        if (savedInstanceState == null) {
-            mBinding.setIsLoading(true);
-            LocalBuoyService service = ApiFactory.getService();
-            Call<LocationListResponse> call = service.getLocationList();
-            call.enqueue(new Callback<LocationListResponse>() {
-                @Override
-                public void onResponse(Call<LocationListResponse> call, Response<LocationListResponse> response) {
-                    mBinding.setIsLoading(false);
-                    LocationListResponse body = response.body();
-                    KLog.d(body.getResultCodeName());
-
-                    long start = System.currentTimeMillis();
-//                BrowseContract.clean(getContext());
-                    KLog.d("cleaning time: " + (System.currentTimeMillis() - start));
-                    start = System.currentTimeMillis();
-//                BrowseContract.saveHierarchy(getContext(), body.getRootItem());
-                    KLog.d("inserting time: " + (System.currentTimeMillis() - start));
-                }
-
-                @Override
-                public void onFailure(Call<LocationListResponse> call, Throwable t) {
-                    mBinding.setIsLoading(false);
-                    KLog.e(t);
-                    Toast.makeText(MainActivity.this, t.getMessage(), Toast.LENGTH_SHORT).show();
-                }
-            });
-        }
     }
 
     @Override
@@ -97,13 +69,39 @@ public class MainActivity extends ToolbarActivity implements BrowseFragment.Brow
         setTitle(title);
     }
 
+    private void loadData() {
+        mBinding.setIsLoading(true);
+        LocalBuoyService service = ApiFactory.getService();
+        Call<LocationListResponse> call = service.getLocationList();
+        call.enqueue(new Callback<LocationListResponse>() {
+            @Override
+            public void onResponse(Call<LocationListResponse> call, Response<LocationListResponse> response) {
+                mBinding.setIsLoading(false);
+                LocationListResponse body = response.body();
+                KLog.d(body.getResultCodeName());
+
+                BrowseContract.saveHierarchy(getContext(), body.getRootItem());
+            }
+
+            @Override
+            public void onFailure(Call<LocationListResponse> call, Throwable t) {
+                mBinding.setIsLoading(false);
+                KLog.e(t);
+                Toast.makeText(MainActivity.this, t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
     protected void initializeFromParams(Bundle savedInstanceState) {
         long itemId = BrowseContract.ROOT_ID;
 
         if (savedInstanceState != null) {
             itemId = savedInstanceState.getLong(SAVED_ITEM_ID);
+        } else {
+            loadData();
         }
         navigateTo(itemId);
+        updateToolbar();
     }
 
     private void navigateTo(long itemId) {

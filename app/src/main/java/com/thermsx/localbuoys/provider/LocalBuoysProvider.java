@@ -97,22 +97,30 @@ public class LocalBuoysProvider extends ContentProvider {
         switch (URI_MATCHER.match(uri)) {
             case BROWSE:
                 int count = 0;
-                String sql = "INSERT INTO " + BrowseContract.Request.TABLE_NAME + " VALUES (?,?,?);";
+                String query = "INSERT INTO " +
+                        BrowseContract.Request.TABLE_NAME + " VALUES (?, ?, ?, ?);";
                 SQLiteDatabase database = mDatabaseHelper.getWritableDatabase();
-                SQLiteStatement statement = database.compileStatement(sql);
                 database.beginTransaction();
-                for (int i = 0; i < values.length; i++) {
+                database.delete(BrowseContract.Request.TABLE_NAME, null, null);
+                SQLiteStatement statement = database.compileStatement(query);
+                for (ContentValues value : values) {
                     count++;
                     statement.clearBindings();
-                    statement.bindLong(1, i);
-                    statement.bindLong(2, i);
-                    statement.bindLong(3, i * i);
+                    statement.bindLong(1, value.getAsLong(BrowseContract.Column.LOCATION_ID));
+                    statement.bindLong(2, value.getAsLong(BrowseContract.Column.PARENT_ID));
+                    statement.bindLong(3, value.getAsInteger(BrowseContract.Column.ITEM_TYPE));
+                    statement.bindString(4, value.getAsString(BrowseContract.Column.NAME));
                     statement.execute();
                 }
                 database.setTransactionSuccessful();
                 database.endTransaction();
+
+                getContext().getContentResolver().notifyChange(uri, null);
+                getContext().getContentResolver().notifyChange(BrowseContract.CONTENT_URI_BY_PARENT_ID, null);
+                return count;
+            default:
+                return super.bulkInsert(uri, values);
         }
-        return super.bulkInsert(uri, values);
     }
 
 

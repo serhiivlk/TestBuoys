@@ -8,9 +8,11 @@ import android.net.Uri;
 import android.provider.BaseColumns;
 import android.support.annotation.NonNull;
 
+import com.socks.library.KLog;
 import com.thermsx.localbuoys.model.Item;
 import com.thermsx.localbuoys.provider.LocalBuoysProvider;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -30,22 +32,32 @@ public class BrowseContract {
     }
 
     public static void saveHierarchy(Context context, Item rootItem) {
-        if (!isRoot(rootItem)) {
-            insert(context, rootItem);
+        long start = System.currentTimeMillis();
+        List<Item> items = getFromHierarchy(rootItem);
+        List<ContentValues> values = new ArrayList<>(items.size());
+        for (Item item : items) {
+            values.add(toContentValues(item));
         }
+        long end = System.currentTimeMillis();
+        ContentValues[] valuesArray = values.toArray(new ContentValues[values.size()]);
+        KLog.d("converting time: " + (end - start) + "; size: " + valuesArray.length);
+        context.getContentResolver()
+                .bulkInsert(CONTENT_URI, valuesArray);
+    }
+
+    private static List<Item> getFromHierarchy(Item rootItem) {
+        List<Item> items = new ArrayList<>();
         if (rootItem.getItems() != null) {
+            items.addAll(rootItem.getItems());
             for (Item item : rootItem.getItems()) {
-                saveHierarchy(context, item);
+                items.addAll(getFromHierarchy(item));
             }
         }
+        return items;
     }
 
     public static boolean isRoot(Item item) {
         return item.getLocationId() == ROOT_ID;
-    }
-
-    public static int clean(Context context) {
-        return context.getContentResolver().delete(CONTENT_URI, null, null);
     }
 
     public static Item fromCursor(Cursor cursor) {

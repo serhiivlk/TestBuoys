@@ -26,17 +26,26 @@ public class DataLoader extends AsyncTaskLoader<String> {
 
     @Override
     public String loadInBackground() {
-        try {
-            Response<LocationListResponse> response = mCall.execute();
-            LocationListResponse body = response.body();
-            KLog.d(body.getResultCodeName());
+        if (!mCall.isExecuted())
+            try {
+                Response<LocationListResponse> response = mCall.execute();
+                LocationListResponse body = response.body();
+                KLog.d(body.getResultCodeName());
 
-            BrowseContract.saveHierarchy(getContext(), body.getRootItem());
-            return body.getResultCodeName();
-        } catch (IOException e) {
-            e.printStackTrace();
-            return e.getMessage();
-        }
+                BrowseContract.saveHierarchy(getContext(), body.getRootItem());
+                return body.getResultCodeName();
+            } catch (IOException e) {
+                e.printStackTrace();
+                return e.getMessage();
+            }
+        return null;
+    }
+
+
+    @Override
+    protected void onReset() {
+        super.onReset();
+        mCall.cancel();
     }
 
     @Override

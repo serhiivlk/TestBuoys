@@ -25,6 +25,11 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
     public static final String EXTRA_ITEM_ID =
             "com.thermsx.localbuoys.ITEM_ID";
 
+    private static final String SAVED_IS_INITIALIZE =
+            "com.thermsx.localbuoys.IS_INITIALIZE";
+
+    private boolean mIsInitialize;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,7 +48,15 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
                     getLoaderManager().initLoader(R.id.browse_id_loader, extras, this);
                 }
             }
+        } else {
+            mIsInitialize = savedInstanceState.getBoolean(SAVED_IS_INITIALIZE, false);
         }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putBoolean(SAVED_IS_INITIALIZE, mIsInitialize);
+        super.onSaveInstanceState(outState);
     }
 
     private void updateTitle(String title) {
@@ -66,6 +79,9 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
         KLog.d();
+        if (mIsInitialize) {
+            return;
+        }
         if (cursor != null && cursor.moveToFirst()) {
             final LocationNode node = BrowseContract.fromCursor(cursor);
             KLog.d("id " + node.getLocationId());
@@ -82,6 +98,7 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
                             transaction.add(R.id.info_container, fragment);
                         }
                         transaction.commit();
+                        mIsInitialize = true;
                     } catch (Exception e) {
                         KLog.e(e);
                     }

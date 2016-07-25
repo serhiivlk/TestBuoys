@@ -29,7 +29,7 @@ public class ApiFactory {
     }
 
     @NonNull
-    public static Retrofit getRetrofit() {
+    private static Retrofit getRetrofit() {
         return RETROFIT_BUILDER
                 .client(OK_HTTP_BUILDER.build())
                 .build();

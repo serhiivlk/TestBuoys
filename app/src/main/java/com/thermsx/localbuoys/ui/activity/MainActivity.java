@@ -12,7 +12,7 @@ import com.socks.library.KLog;
 import com.thermsx.localbuoys.R;
 import com.thermsx.localbuoys.api.ApiFactory;
 import com.thermsx.localbuoys.api.LocalBuoyService;
-import com.thermsx.localbuoys.api.LocationListResponse;
+import com.thermsx.localbuoys.api.response.LocationListResponse;
 import com.thermsx.localbuoys.databinding.ActivityMainBinding;
 import com.thermsx.localbuoys.model.LocationNode;
 import com.thermsx.localbuoys.provider.table.BrowseContract;

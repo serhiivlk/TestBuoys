@@ -1,4 +1,4 @@
-package com.thermsx.localbuoys.api;
+package com.thermsx.localbuoys.api.response;
 
 import com.google.gson.annotations.SerializedName;
 import com.thermsx.localbuoys.model.LocationNode;
@@ -8,6 +8,8 @@ import java.util.List;
 public class LocationListResponse {
     @SerializedName("ReturnValue")
     private List<LocationNode> mLocationNodes;
+    @SerializedName("ResultCode")
+    private int mResultCode;
     @SerializedName("ErrorMessage")
     private String mErrorMessage;
     @SerializedName("ResultCodeName")
@@ -22,6 +24,10 @@ public class LocationListResponse {
 
     public List<LocationNode> getLocationNodes() {
         return mLocationNodes;
+    }
+
+    public int getResultCode() {
+        return mResultCode;
     }
 
     public String getErrorMessage() {

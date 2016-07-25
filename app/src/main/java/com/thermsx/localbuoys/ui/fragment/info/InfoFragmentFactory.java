@@ -3,6 +3,7 @@ package com.thermsx.localbuoys.ui.fragment.info;
 
 import android.app.Fragment;
 
+import com.socks.library.KLog;
 import com.thermsx.localbuoys.model.Item;
 
 import java.lang.reflect.InvocationTargetException;
@@ -20,11 +21,15 @@ public abstract class InfoFragmentFactory {
         return aClass.getPackage().getName();
     }
 
-    public static List<Fragment> create(Item item) throws InvocationTargetException, IllegalAccessException, InstantiationException, ClassNotFoundException {
+    public static List<Fragment> create(Item item) throws InvocationTargetException, IllegalAccessException, InstantiationException {
         List<Fragment> fragmentList = new ArrayList<>();
         List<String> fields = getExistingVisibleFields(item);
         for (String field : fields) {
-            fragmentList.add(createFragment(item.getLocationId(), field));
+            try {
+                fragmentList.add(createFragment(item.getLocationId(), field));
+            } catch (ClassNotFoundException e) {
+                KLog.e(e);
+            }
         }
         return fragmentList;
     }

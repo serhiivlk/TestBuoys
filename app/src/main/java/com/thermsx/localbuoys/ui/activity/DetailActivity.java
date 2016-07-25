@@ -14,6 +14,7 @@ import com.socks.library.KLog;
 import com.thermsx.localbuoys.R;
 import com.thermsx.localbuoys.model.Item;
 import com.thermsx.localbuoys.provider.table.BrowseContract;
+import com.thermsx.localbuoys.ui.fragment.info.InfoFactory;
 
 public class DetailActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
     public static final String EXTRA_ITEM_ID =
@@ -60,8 +61,9 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
         KLog.d();
         if (cursor != null && cursor.moveToFirst()) {
             Item item = BrowseContract.fromCursor(cursor);
-            KLog.d(item.getName());
+            InfoFactory.create(item);
             updateTitle(item.getName());
+
         }
     }
 

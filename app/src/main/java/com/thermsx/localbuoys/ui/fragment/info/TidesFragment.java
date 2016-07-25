@@ -80,7 +80,7 @@ public class TidesFragment extends InfoFragment {
                 List<TideData> datas = returnValue.getTideDatas();
                 List<PointValue> values = new ArrayList<>();
                 for (TideData data : datas) {
-                    values.add(new PointValue((float) data.getDay(), (float) data.getValue()));
+                    values.add(new PointValue((float) data.getDay(), data.getValue()));
                 }
                 Line line = new Line(values).setColor(Color.BLUE).setCubic(true);
                 List<Line> lines = new ArrayList<>();

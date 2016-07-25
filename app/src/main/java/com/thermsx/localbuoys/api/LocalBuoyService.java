@@ -2,6 +2,7 @@ package com.thermsx.localbuoys.api;
 
 import com.thermsx.localbuoys.api.response.BuoyInfoResponse;
 import com.thermsx.localbuoys.api.response.LocationListResponse;
+import com.thermsx.localbuoys.api.response.MoonPhasesResponse;
 import com.thermsx.localbuoys.api.response.TidesDataResponse;
 import com.thermsx.localbuoys.api.response.TidesGeneralInfoResponse;
 
@@ -21,4 +22,15 @@ public interface LocalBuoyService {
 
     @GET("GetTidalTidesData")
     Call<TidesDataResponse> getTidesData(@Query("locationId") long locationId);
+
+    /**
+     * @param locationId
+     * @param onDate     format "MM/dd/yyyy"
+     * @return
+     */
+    @GET("GetMoonPhases")
+    Call<MoonPhasesResponse> getMoonPhases(
+            @Query("locationId") long locationId,
+            @Query("onDate") String onDate
+    );
 }

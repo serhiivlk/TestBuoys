@@ -18,6 +18,22 @@ public class Item {
     private String mName;
     @SerializedName("Items")
     private List<Item> mItems;
+    @SerializedName("VisibleOnBuoys")
+    private boolean mVisibleOnBuoys;
+    @SerializedName("VisibleOnWeatherForecast")
+    private boolean mVisibleOnWeatherForecast;
+    @SerializedName("VisibleOnMarineForecast")
+    private boolean mVisibleOnMarineForecast;
+    @SerializedName("VisibleOnTides")
+    private boolean mVisibleOnTides;
+    @SerializedName("VisibleOnMoonPhases")
+    private boolean mVisibleOnMoonPhases;
+    @SerializedName("VisibleOnRadar")
+    private boolean mVisibleOnRadar;
+    @SerializedName("VisibleOnWavewatch")
+    private boolean mVisibleOnWavewatch;
+    @SerializedName("VisibleOnSeaSurfaceTemp")
+    private boolean mVisibleOnSeaSurfaceTemp;
 
     public boolean isBrowsable() {
         return mType != TYPE_ITEM;
@@ -61,5 +77,69 @@ public class Item {
 
     public void setItems(List<Item> items) {
         mItems = items;
+    }
+
+    public boolean isVisibleOnBuoys() {
+        return mVisibleOnBuoys;
+    }
+
+    public void setVisibleOnBuoys(boolean visibleOnBuoys) {
+        mVisibleOnBuoys = visibleOnBuoys;
+    }
+
+    public boolean isVisibleOnWeatherForecast() {
+        return mVisibleOnWeatherForecast;
+    }
+
+    public void setVisibleOnWeatherForecast(boolean visibleOnWeatherForecast) {
+        mVisibleOnWeatherForecast = visibleOnWeatherForecast;
+    }
+
+    public boolean isVisibleOnMarineForecast() {
+        return mVisibleOnMarineForecast;
+    }
+
+    public void setVisibleOnMarineForecast(boolean visibleOnMarineForecast) {
+        mVisibleOnMarineForecast = visibleOnMarineForecast;
+    }
+
+    public boolean isVisibleOnTides() {
+        return mVisibleOnTides;
+    }
+
+    public void setVisibleOnTides(boolean visibleOnTides) {
+        mVisibleOnTides = visibleOnTides;
+    }
+
+    public boolean isVisibleOnMoonPhases() {
+        return mVisibleOnMoonPhases;
+    }
+
+    public void setVisibleOnMoonPhases(boolean visibleOnMoonPhases) {
+        mVisibleOnMoonPhases = visibleOnMoonPhases;
+    }
+
+    public boolean isVisibleOnRadar() {
+        return mVisibleOnRadar;
+    }
+
+    public void setVisibleOnRadar(boolean visibleOnRadar) {
+        mVisibleOnRadar = visibleOnRadar;
+    }
+
+    public boolean isVisibleOnWavewatch() {
+        return mVisibleOnWavewatch;
+    }
+
+    public void setVisibleOnWavewatch(boolean visibleOnWavewatch) {
+        mVisibleOnWavewatch = visibleOnWavewatch;
+    }
+
+    public boolean isVisibleOnSeaSurfaceTemp() {
+        return mVisibleOnSeaSurfaceTemp;
+    }
+
+    public void setVisibleOnSeaSurfaceTemp(boolean visibleOnSeaSurfaceTemp) {
+        mVisibleOnSeaSurfaceTemp = visibleOnSeaSurfaceTemp;
     }
 }

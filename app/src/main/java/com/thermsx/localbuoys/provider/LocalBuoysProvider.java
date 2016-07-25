@@ -105,7 +105,7 @@ public class LocalBuoysProvider extends ContentProvider {
             case BROWSE:
                 int count = 0;
                 String query = "INSERT INTO " +
-                        BrowseContract.Request.TABLE_NAME + " VALUES (?, ?, ?, ?);";
+                        BrowseContract.Request.TABLE_NAME + " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
                 SQLiteDatabase database = mDatabaseHelper.getWritableDatabase();
                 database.beginTransaction();
                 database.delete(BrowseContract.Request.TABLE_NAME, null, null);
@@ -117,6 +117,14 @@ public class LocalBuoysProvider extends ContentProvider {
                     statement.bindLong(2, value.getAsLong(BrowseContract.Column.PARENT_ID));
                     statement.bindLong(3, value.getAsInteger(BrowseContract.Column.ITEM_TYPE));
                     statement.bindString(4, value.getAsString(BrowseContract.Column.NAME));
+                    statement.bindLong(5, value.getAsInteger(BrowseContract.Column.VISIBLE_ON_BUOYS));
+                    statement.bindLong(6, value.getAsInteger(BrowseContract.Column.VISIBLE_ON_WEATHER_FORECAST));
+                    statement.bindLong(7, value.getAsInteger(BrowseContract.Column.VISIBLE_ON_MARINE_FORECAST));
+                    statement.bindLong(8, value.getAsInteger(BrowseContract.Column.VISIBLE_ON_TIDES));
+                    statement.bindLong(9, value.getAsInteger(BrowseContract.Column.VISIBLE_ON_MOON_PHASES));
+                    statement.bindLong(10, value.getAsInteger(BrowseContract.Column.VISIBLE_ON_RADAR));
+                    statement.bindLong(11, value.getAsInteger(BrowseContract.Column.VISIBLE_ON_WAVEWATCH));
+                    statement.bindLong(12, value.getAsInteger(BrowseContract.Column.VISIBLE_ON_SEA_SURFACE_TEMP));
                     statement.execute();
                 }
                 database.setTransactionSuccessful();

@@ -14,7 +14,7 @@ import com.thermsx.localbuoys.api.ApiFactory;
 import com.thermsx.localbuoys.api.LocalBuoyService;
 import com.thermsx.localbuoys.api.LocationListResponse;
 import com.thermsx.localbuoys.databinding.ActivityMainBinding;
-import com.thermsx.localbuoys.model.Item;
+import com.thermsx.localbuoys.model.LocationNode;
 import com.thermsx.localbuoys.provider.table.BrowseContract;
 import com.thermsx.localbuoys.ui.fragment.BrowseFragment;
 
@@ -54,14 +54,14 @@ public class MainActivity extends ToolbarActivity implements BrowseFragment.Brow
     }
 
     @Override
-    public void onItemSelected(View view, Item item) {
-        long id = item.getLocationId();
-        KLog.d("id: " + id + "; isBrowsable: " + item.isBrowsable());
-        if (item.isBrowsable()) {
+    public void onItemSelected(View view, LocationNode node) {
+        long id = node.getLocationId();
+        KLog.d("id: " + id + "; isBrowsable: " + node.isBrowsable());
+        if (node.isBrowsable()) {
             navigateTo(id);
         } else {
             Intent intent = new Intent(getContext(), DetailActivity.class);
-            intent.putExtra(DetailActivity.EXTRA_ITEM_ID, item.getLocationId());
+            intent.putExtra(DetailActivity.EXTRA_ITEM_ID, node.getLocationId());
             startActivity(intent);
         }
     }

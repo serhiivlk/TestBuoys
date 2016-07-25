@@ -4,7 +4,7 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
-public class Item {
+public class LocationNode {
     public static final int TYPE_BROWSE = 0;
     public static final int TYPE_ITEM = 2;
 
@@ -17,7 +17,7 @@ public class Item {
     @SerializedName("Name")
     private String mName;
     @SerializedName("Items")
-    private List<Item> mItems;
+    private List<LocationNode> mLocationNodes;
     @SerializedName("VisibleOnBuoys")
     private boolean mVisibleOnBuoys;
     @SerializedName("VisibleOnWeatherForecast")
@@ -71,12 +71,12 @@ public class Item {
         mName = name;
     }
 
-    public List<Item> getItems() {
-        return mItems;
+    public List<LocationNode> getLocationNodes() {
+        return mLocationNodes;
     }
 
-    public void setItems(List<Item> items) {
-        mItems = items;
+    public void setLocationNodes(List<LocationNode> locationNodes) {
+        mLocationNodes = locationNodes;
     }
 
     public boolean isVisibleOnBuoys() {

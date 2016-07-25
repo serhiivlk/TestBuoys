@@ -1,27 +1,27 @@
 package com.thermsx.localbuoys.api;
 
 import com.google.gson.annotations.SerializedName;
-import com.thermsx.localbuoys.model.Item;
+import com.thermsx.localbuoys.model.LocationNode;
 
 import java.util.List;
 
 public class LocationListResponse {
     @SerializedName("ReturnValue")
-    private List<Item> mItems;
+    private List<LocationNode> mLocationNodes;
     @SerializedName("ErrorMessage")
     private String mErrorMessage;
     @SerializedName("ResultCodeName")
     private String mResultCodeName;
 
-    public Item getRootItem() {
-        if (mItems != null && mItems.size() > 0) {
-            return mItems.get(0);
+    public LocationNode getRootItem() {
+        if (mLocationNodes != null && mLocationNodes.size() > 0) {
+            return mLocationNodes.get(0);
         }
         return null;
     }
 
-    public List<Item> getItems() {
-        return mItems;
+    public List<LocationNode> getLocationNodes() {
+        return mLocationNodes;
     }
 
     public String getErrorMessage() {

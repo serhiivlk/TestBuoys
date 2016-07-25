@@ -15,7 +15,7 @@ import android.view.MenuItem;
 
 import com.socks.library.KLog;
 import com.thermsx.localbuoys.R;
-import com.thermsx.localbuoys.model.Item;
+import com.thermsx.localbuoys.model.LocationNode;
 import com.thermsx.localbuoys.provider.table.BrowseContract;
 import com.thermsx.localbuoys.ui.fragment.info.InfoFragmentFactory;
 
@@ -67,13 +67,13 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
         KLog.d();
         if (cursor != null && cursor.moveToFirst()) {
-            final Item item = BrowseContract.fromCursor(cursor);
-            KLog.d("id " + item.getLocationId());
+            final LocationNode node = BrowseContract.fromCursor(cursor);
+            KLog.d("id " + node.getLocationId());
             new Handler().post(new Runnable() {
                 @Override
                 public void run() {
                     try {
-                        List<Fragment> fragmentList = InfoFragmentFactory.create(item);
+                        List<Fragment> fragmentList = InfoFragmentFactory.create(node);
                         if (fragmentList.isEmpty()) {
                             return;
                         }
@@ -87,7 +87,7 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
                     }
                 }
             });
-            updateTitle(item.getName());
+            updateTitle(node.getName());
 
         }
     }

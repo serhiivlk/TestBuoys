@@ -6,8 +6,8 @@
     <data>
 
         <variable
-            name="item"
-            type="com.thermsx.localbuoys.model.Item"
+            name="node"
+            type="com.thermsx.localbuoys.model.LocationNode"
             />
 
         <import type="android.view.View"/>
@@ -25,7 +25,7 @@
             android:layout_gravity="center_vertical"
             android:paddingLeft="16dp"
             android:src="@drawable/arrow_right"
-            android:visibility="@{item.isBrowsable ? View.VISIBLE : View.GONE}"
+            android:visibility="@{node.isBrowsable ? View.VISIBLE : View.GONE}"
             />
 
         <TextView
@@ -36,7 +36,7 @@
             android:minHeight="?android:attr/listPreferredItemHeightSmall"
             android:paddingLeft="16dp"
             android:paddingRight="16dp"
-            android:text="@{item.name}"
+            android:text="@{node.name}"
             android:textAppearance="?android:attr/textAppearanceListItemSmall"
             />
 

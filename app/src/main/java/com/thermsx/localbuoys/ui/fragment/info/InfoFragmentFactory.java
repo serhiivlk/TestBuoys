@@ -4,7 +4,7 @@ package com.thermsx.localbuoys.ui.fragment.info;
 import android.app.Fragment;
 
 import com.socks.library.KLog;
-import com.thermsx.localbuoys.model.Item;
+import com.thermsx.localbuoys.model.LocationNode;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -21,12 +21,12 @@ public abstract class InfoFragmentFactory {
         return aClass.getPackage().getName();
     }
 
-    public static List<Fragment> create(Item item) throws InvocationTargetException, IllegalAccessException, InstantiationException {
+    public static List<Fragment> create(LocationNode node) throws InvocationTargetException, IllegalAccessException, InstantiationException {
         List<Fragment> fragmentList = new ArrayList<>();
-        List<String> fields = getExistingVisibleFields(item);
+        List<String> fields = getExistingVisibleFields(node);
         for (String field : fields) {
             try {
-                fragmentList.add(createFragment(item.getLocationId(), field));
+                fragmentList.add(createFragment(node.getLocationId(), field));
             } catch (ClassNotFoundException e) {
                 KLog.e(e);
             }
@@ -34,12 +34,12 @@ public abstract class InfoFragmentFactory {
         return fragmentList;
     }
 
-    private static List<String> getExistingVisibleFields(Item item) throws InvocationTargetException, IllegalAccessException {
-        Class<? extends Item> itemClass = item.getClass();
+    private static List<String> getExistingVisibleFields(LocationNode node) throws InvocationTargetException, IllegalAccessException {
+        Class<? extends LocationNode> itemClass = node.getClass();
         List<String> fieldNames = new ArrayList<>();
         for (Method method : itemClass.getMethods()) {
             if (method.getGenericReturnType() == boolean.class && method.getName().startsWith(METHOD_PREFIX)) {
-                if ((Boolean) method.invoke(item)) {
+                if ((Boolean) method.invoke(node)) {
                     fieldNames.add(method.getName());
                 }
             }

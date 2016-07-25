@@ -21,7 +21,7 @@ import com.socks.library.KLog;
 import com.thermsx.localbuoys.R;
 import com.thermsx.localbuoys.adapter.ItemListCursorAdapter;
 import com.thermsx.localbuoys.databinding.FragmentBrowseBinding;
-import com.thermsx.localbuoys.model.Item;
+import com.thermsx.localbuoys.model.LocationNode;
 import com.thermsx.localbuoys.provider.table.BrowseContract;
 
 public class BrowseFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>, ItemListCursorAdapter.OnItemClickListener {
@@ -132,15 +132,15 @@ public class BrowseFragment extends Fragment implements LoaderManager.LoaderCall
     }
 
     @Override
-    public void onItemClick(View view, int position, Item item) {
+    public void onItemClick(View view, int position, LocationNode node) {
         KLog.d();
         if (mBrowseFragmentListener != null) {
-            mBrowseFragmentListener.onItemSelected(view, item);
+            mBrowseFragmentListener.onItemSelected(view, node);
         }
     }
 
     public interface BrowseFragmentListener {
-        void onItemSelected(View view, Item item);
+        void onItemSelected(View view, LocationNode locationNode);
 
         void setToolbarTitle(CharSequence title);
     }

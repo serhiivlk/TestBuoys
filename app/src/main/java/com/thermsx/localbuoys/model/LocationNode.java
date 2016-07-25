@@ -4,25 +4,10 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
-public class Item {
+public class LocationNode {
     public static final int TYPE_BROWSE = 0;
     public static final int TYPE_ITEM = 2;
-    @SerializedName("VisibleOnBuoys")
-    public boolean mVisibleOnBuoys;
-    @SerializedName("VisibleOnWeatherForecast")
-    public boolean mVisibleOnWeatherForecast;
-    @SerializedName("VisibleOnMarineForecast")
-    public boolean mVisibleOnMarineForecast;
-    @SerializedName("VisibleOnTides")
-    public boolean mVisibleOnTides;
-    @SerializedName("VisibleOnMoonPhases")
-    public boolean mVisibleOnMoonPhases;
-    @SerializedName("VisibleOnRadar")
-    public boolean mVisibleOnRadar;
-    @SerializedName("VisibleOnWavewatch")
-    public boolean mVisibleOnWavewatch;
-    @SerializedName("VisibleOnSeaSurfaceTemp")
-    public boolean mVisibleOnSeaSurfaceTemp;
+
     @SerializedName("LocationId")
     private long mLocationId;
     @SerializedName("ParentId")
@@ -32,7 +17,23 @@ public class Item {
     @SerializedName("Name")
     private String mName;
     @SerializedName("Items")
-    private List<Item> mItems;
+    private List<LocationNode> mLocationNodes;
+    @SerializedName("VisibleOnBuoys")
+    private boolean mVisibleOnBuoys;
+    @SerializedName("VisibleOnWeatherForecast")
+    private boolean mVisibleOnWeatherForecast;
+    @SerializedName("VisibleOnMarineForecast")
+    private boolean mVisibleOnMarineForecast;
+    @SerializedName("VisibleOnTides")
+    private boolean mVisibleOnTides;
+    @SerializedName("VisibleOnMoonPhases")
+    private boolean mVisibleOnMoonPhases;
+    @SerializedName("VisibleOnRadar")
+    private boolean mVisibleOnRadar;
+    @SerializedName("VisibleOnWavewatch")
+    private boolean mVisibleOnWavewatch;
+    @SerializedName("VisibleOnSeaSurfaceTemp")
+    private boolean mVisibleOnSeaSurfaceTemp;
 
     public boolean isBrowsable() {
         return mType != TYPE_ITEM;
@@ -70,12 +71,12 @@ public class Item {
         mName = name;
     }
 
-    public List<Item> getItems() {
-        return mItems;
+    public List<LocationNode> getLocationNodes() {
+        return mLocationNodes;
     }
 
-    public void setItems(List<Item> items) {
-        mItems = items;
+    public void setLocationNodes(List<LocationNode> locationNodes) {
+        mLocationNodes = locationNodes;
     }
 
     public boolean isVisibleOnBuoys() {

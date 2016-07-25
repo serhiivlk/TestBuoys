@@ -6,4 +6,6 @@
           type="id"/>
     <item name="item_loader"
           type="id"/>
+    <item name="browse_id_loader"
+          type="id"/>
 </resources>

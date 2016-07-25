@@ -1,5 +1,6 @@
 package com.thermsx.localbuoys.ui.fragment;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.LoaderManager;
@@ -8,6 +9,7 @@ import android.content.CursorLoader;
 import android.content.Loader;
 import android.database.Cursor;
 import android.databinding.DataBindingUtil;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
@@ -19,7 +21,7 @@ import com.socks.library.KLog;
 import com.thermsx.localbuoys.R;
 import com.thermsx.localbuoys.adapter.ItemListCursorAdapter;
 import com.thermsx.localbuoys.databinding.FragmentBrowseBinding;
-import com.thermsx.localbuoys.model.Item;
+import com.thermsx.localbuoys.model.LocationNode;
 import com.thermsx.localbuoys.provider.table.BrowseContract;
 
 public class BrowseFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>, ItemListCursorAdapter.OnItemClickListener {
@@ -31,22 +33,31 @@ public class BrowseFragment extends Fragment implements LoaderManager.LoaderCall
 
     private FragmentBrowseBinding mBinding;
 
+    @TargetApi(Build.VERSION_CODES.M)
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
         KLog.d("context");
+        onAttachToContext(context);
+    }
+
+    @SuppressWarnings("deprecation")
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        KLog.d("activity");
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+            onAttachToContext(activity);
+        }
+    }
+
+    protected void onAttachToContext(Context context) {
         try {
             mBrowseFragmentListener = (BrowseFragmentListener) context;
         } catch (ClassCastException ex) {
             throw new ClassCastException("TVBrowseFragment can only be attached to an activity that " +
                     "implements MediaFragmentListener");
         }
-    }
-
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        KLog.d("activity");
     }
 
     @Override
@@ -121,15 +132,15 @@ public class BrowseFragment extends Fragment implements LoaderManager.LoaderCall
     }
 
     @Override
-    public void onItemClick(View view, int position, Item item) {
+    public void onItemClick(View view, int position, LocationNode node) {
         KLog.d();
         if (mBrowseFragmentListener != null) {
-            mBrowseFragmentListener.onItemSelected(view, item);
+            mBrowseFragmentListener.onItemSelected(view, node);
         }
     }
 
     public interface BrowseFragmentListener {
-        void onItemSelected(View view, Item item);
+        void onItemSelected(View view, LocationNode locationNode);
 
         void setToolbarTitle(CharSequence title);
     }

@@ -12,9 +12,9 @@ import com.socks.library.KLog;
 import com.thermsx.localbuoys.R;
 import com.thermsx.localbuoys.api.ApiFactory;
 import com.thermsx.localbuoys.api.LocalBuoyService;
-import com.thermsx.localbuoys.api.LocationListResponse;
+import com.thermsx.localbuoys.api.response.LocationListResponse;
 import com.thermsx.localbuoys.databinding.ActivityMainBinding;
-import com.thermsx.localbuoys.model.Item;
+import com.thermsx.localbuoys.model.LocationNode;
 import com.thermsx.localbuoys.provider.table.BrowseContract;
 import com.thermsx.localbuoys.ui.fragment.BrowseFragment;
 
@@ -37,7 +37,6 @@ public class MainActivity extends ToolbarActivity implements BrowseFragment.Brow
 
         initializeToolbar();
         initializeFromParams(savedInstanceState);
-
     }
 
     @Override
@@ -55,14 +54,14 @@ public class MainActivity extends ToolbarActivity implements BrowseFragment.Brow
     }
 
     @Override
-    public void onItemSelected(View view, Item item) {
-        long id = item.getLocationId();
-        KLog.d("id: " + id + "; isBrowsable: " + item.isBrowsable());
-        if (item.isBrowsable()) {
+    public void onItemSelected(View view, LocationNode node) {
+        long id = node.getLocationId();
+        KLog.d("id: " + id + "; isBrowsable: " + node.isBrowsable());
+        if (node.isBrowsable()) {
             navigateTo(id);
         } else {
-            Intent intent = new Intent(this, DetailActivity.class);
-            intent.putExtra(DetailActivity.EXTRA_ITEM_ID, item.getLocationId());
+            Intent intent = new Intent(getContext(), DetailActivity.class);
+            intent.putExtra(DetailActivity.EXTRA_ITEM_ID, node.getLocationId());
             startActivity(intent);
         }
     }
@@ -74,29 +73,6 @@ public class MainActivity extends ToolbarActivity implements BrowseFragment.Brow
             title = getString(R.string.app_name);
         }
         setTitle(title);
-    }
-
-    private void loadData() {
-        setLoading(true);
-        LocalBuoyService service = ApiFactory.getService();
-        Call<LocationListResponse> call = service.getLocationList();
-        call.enqueue(new Callback<LocationListResponse>() {
-            @Override
-            public void onResponse(Call<LocationListResponse> call, Response<LocationListResponse> response) {
-                setLoading(false);
-                LocationListResponse body = response.body();
-                KLog.d(body.getResultCodeName());
-
-                BrowseContract.saveHierarchy(getContext(), body.getRootItem());
-            }
-
-            @Override
-            public void onFailure(Call<LocationListResponse> call, Throwable t) {
-                setLoading(false);
-                KLog.e(t);
-                Toast.makeText(MainActivity.this, t.getMessage(), Toast.LENGTH_SHORT).show();
-            }
-        });
     }
 
     private boolean isLoading() {
@@ -141,6 +117,29 @@ public class MainActivity extends ToolbarActivity implements BrowseFragment.Brow
         }
     }
 
+    private void loadData() {
+        setLoading(true);
+        LocalBuoyService service = ApiFactory.getService();
+        Call<LocationListResponse> call = service.getLocationList();
+        call.enqueue(new Callback<LocationListResponse>() {
+            @Override
+            public void onResponse(Call<LocationListResponse> call, Response<LocationListResponse> response) {
+                setLoading(false);
+                LocationListResponse body = response.body();
+                KLog.d(body.getResultCodeName());
+
+                BrowseContract.saveHierarchy(getContext(), body.getRootItem());
+            }
+
+            @Override
+            public void onFailure(Call<LocationListResponse> call, Throwable t) {
+                setLoading(false);
+                KLog.e(t);
+                Toast.makeText(MainActivity.this, t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
     private long getItemId() {
         BrowseFragment fragment = getBrowseFragment();
         if (fragment == null) {
@@ -152,6 +151,5 @@ public class MainActivity extends ToolbarActivity implements BrowseFragment.Brow
     private Context getContext() {
         return this;
     }
-
 
 }

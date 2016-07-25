@@ -11,7 +11,7 @@ import android.view.ViewGroup;
 import com.socks.library.KLog;
 import com.thermsx.localbuoys.R;
 import com.thermsx.localbuoys.databinding.ListItemBrowseBinding;
-import com.thermsx.localbuoys.model.Item;
+import com.thermsx.localbuoys.model.LocationNode;
 import com.thermsx.localbuoys.provider.table.BrowseContract;
 
 public class ItemListCursorAdapter extends CursorRecyclerViewAdapter<ItemListCursorAdapter.ItemViewHolder> {
@@ -30,8 +30,8 @@ public class ItemListCursorAdapter extends CursorRecyclerViewAdapter<ItemListCur
 
     @Override
     public void onBindViewHolder(ItemViewHolder holder, Cursor cursor) {
-        Item item = BrowseContract.fromCursor(cursor);
-        holder.binding.setItem(item);
+        LocationNode locationNode = BrowseContract.fromCursor(cursor);
+        holder.binding.setNode(locationNode);
     }
 
     public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
@@ -39,7 +39,7 @@ public class ItemListCursorAdapter extends CursorRecyclerViewAdapter<ItemListCur
     }
 
     public interface OnItemClickListener {
-        void onItemClick(View view, int position, Item item);
+        void onItemClick(View view, int position, LocationNode locationNode);
     }
 
     public class ItemViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
@@ -56,7 +56,7 @@ public class ItemListCursorAdapter extends CursorRecyclerViewAdapter<ItemListCur
         public void onClick(View view) {
             KLog.d();
             if (mOnItemClickListener != null) {
-                mOnItemClickListener.onItemClick(view, getLayoutPosition(), binding.getItem());
+                mOnItemClickListener.onItemClick(view, getLayoutPosition(), binding.getNode());
             }
         }
     }

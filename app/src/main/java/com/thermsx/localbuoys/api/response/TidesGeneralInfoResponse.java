@@ -1,27 +1,24 @@
-package com.thermsx.localbuoys.api;
+package com.thermsx.localbuoys.api.response;
 
 import com.google.gson.annotations.SerializedName;
-import com.thermsx.localbuoys.model.Item;
+import com.thermsx.localbuoys.model.TidesInfo;
 
-import java.util.List;
-
-public class LocationListResponse {
+public class TidesGeneralInfoResponse {
     @SerializedName("ReturnValue")
-    private List<Item> mItems;
+    private TidesInfo mTidesInfo;
+    @SerializedName("ResultCode")
+    private int mResultCode;
     @SerializedName("ErrorMessage")
     private String mErrorMessage;
     @SerializedName("ResultCodeName")
     private String mResultCodeName;
 
-    public Item getRootItem() {
-        if (mItems != null && mItems.size() > 0) {
-            return mItems.get(0);
-        }
-        return null;
+    public TidesInfo getTidesInfo() {
+        return mTidesInfo;
     }
 
-    public List<Item> getItems() {
-        return mItems;
+    public int getResultCode() {
+        return mResultCode;
     }
 
     public String getErrorMessage() {

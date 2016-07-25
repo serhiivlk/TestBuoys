@@ -1,22 +1,28 @@
 package com.thermsx.localbuoys.ui.activity;
 
 import android.app.FragmentTransaction;
-import android.app.LoaderManager;
 import android.content.Context;
-import android.content.Loader;
+import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Toast;
 
 import com.socks.library.KLog;
 import com.thermsx.localbuoys.R;
+import com.thermsx.localbuoys.api.ApiFactory;
+import com.thermsx.localbuoys.api.LocalBuoyService;
+import com.thermsx.localbuoys.api.LocationListResponse;
 import com.thermsx.localbuoys.databinding.ActivityMainBinding;
-import com.thermsx.localbuoys.loader.DataLoader;
 import com.thermsx.localbuoys.model.Item;
 import com.thermsx.localbuoys.provider.table.BrowseContract;
 import com.thermsx.localbuoys.ui.fragment.BrowseFragment;
 
-public class MainActivity extends ToolbarActivity implements BrowseFragment.BrowseFragmentListener, LoaderManager.LoaderCallbacks<String> {
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
+public class MainActivity extends ToolbarActivity implements BrowseFragment.BrowseFragmentListener {
     private static final String FRAGMENT_TAG = "items_list_container";
     private static final String SAVED_ITEM_ID = "com.thermsx.localbuoys.ITEM_ID";
     private static final String SAVED_IS_LOADING = "com.thermsx.localbuoys.IS_LOADING";
@@ -31,8 +37,6 @@ public class MainActivity extends ToolbarActivity implements BrowseFragment.Brow
 
         initializeToolbar();
         initializeFromParams(savedInstanceState);
-
-        getLoaderManager().initLoader(R.id.load_data_loader, null, this);
     }
 
     @Override
@@ -55,6 +59,10 @@ public class MainActivity extends ToolbarActivity implements BrowseFragment.Brow
         KLog.d("id: " + id + "; isBrowsable: " + item.isBrowsable());
         if (item.isBrowsable()) {
             navigateTo(id);
+        } else {
+            Intent intent = new Intent(getContext(), DetailActivity.class);
+            intent.putExtra(DetailActivity.EXTRA_ITEM_ID, item.getLocationId());
+            startActivity(intent);
         }
     }
 
@@ -83,6 +91,8 @@ public class MainActivity extends ToolbarActivity implements BrowseFragment.Brow
             itemId = savedInstanceState.getLong(SAVED_ITEM_ID, BrowseContract.ROOT_ID);
             boolean loading = savedInstanceState.getBoolean(SAVED_IS_LOADING, false);
             setLoading(loading);
+        } else {
+            loadData();
         }
         navigateTo(itemId);
         updateToolbar();
@@ -107,6 +117,29 @@ public class MainActivity extends ToolbarActivity implements BrowseFragment.Brow
         }
     }
 
+    private void loadData() {
+        setLoading(true);
+        LocalBuoyService service = ApiFactory.getService();
+        Call<LocationListResponse> call = service.getLocationList();
+        call.enqueue(new Callback<LocationListResponse>() {
+            @Override
+            public void onResponse(Call<LocationListResponse> call, Response<LocationListResponse> response) {
+                setLoading(false);
+                LocationListResponse body = response.body();
+                KLog.d(body.getResultCodeName());
+
+                BrowseContract.saveHierarchy(getContext(), body.getRootItem());
+            }
+
+            @Override
+            public void onFailure(Call<LocationListResponse> call, Throwable t) {
+                setLoading(false);
+                KLog.e(t);
+                Toast.makeText(MainActivity.this, t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
     private long getItemId() {
         BrowseFragment fragment = getBrowseFragment();
         if (fragment == null) {
@@ -119,20 +152,4 @@ public class MainActivity extends ToolbarActivity implements BrowseFragment.Brow
         return this;
     }
 
-    @Override
-    public Loader<String> onCreateLoader(int id, Bundle args) {
-        setLoading(true);
-        return new DataLoader(this);
-    }
-
-    @Override
-    public void onLoadFinished(Loader<String> loader, String data) {
-        setLoading(false);
-        KLog.d(data);
-    }
-
-    @Override
-    public void onLoaderReset(Loader<String> loader) {
-
-    }
 }

@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class BrowseContract {
+public abstract class BrowseContract {
     public static final long ROOT_ID = -1;
 
     public static final String PATH = "browse";

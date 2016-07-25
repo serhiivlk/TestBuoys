@@ -51,6 +51,13 @@ public class LocalBuoysProvider extends ContentProvider {
                 KLog.d("URI browse match");
                 builder.setTables(BrowseContract.Request.TABLE_NAME);
                 break;
+            case BROWSE_ID: {
+                long id = ContentUris.parseId(uri);
+                KLog.d("URI browse id " + id + " match");
+                builder.setTables(BrowseContract.Request.TABLE_NAME);
+                builder.appendWhere(BrowseContract.Column.LOCATION_ID + " = " + id);
+                break;
+            }
             case BROWSE_BY_PARENT:
                 String id = BrowseContract.getParentId(uri).get(1);
                 KLog.d("URI browse by parent id " + id);

@@ -24,6 +24,10 @@
             </intent-filter>
         </activity>
 
+        <activity android:name=".ui.activity.DetailActivity">
+
+        </activity>
+
         <provider
             android:name=".provider.LocalBuoysProvider"
             android:authorities="com.thermsx.localbuoys.LocalBuoysProvider"

@@ -1,6 +1,7 @@
 package com.thermsx.localbuoys.ui.fragment.info;
 
-import android.support.v4.app.Fragment;
+
+import android.app.Fragment;
 
 import com.thermsx.localbuoys.model.Item;
 

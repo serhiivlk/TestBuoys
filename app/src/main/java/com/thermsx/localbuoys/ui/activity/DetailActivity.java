@@ -1,11 +1,14 @@
 package com.thermsx.localbuoys.ui.activity;
 
+import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.app.LoaderManager;
 import android.content.ContentUris;
 import android.content.CursorLoader;
 import android.content.Loader;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
@@ -15,6 +18,8 @@ import com.thermsx.localbuoys.R;
 import com.thermsx.localbuoys.model.Item;
 import com.thermsx.localbuoys.provider.table.BrowseContract;
 import com.thermsx.localbuoys.ui.fragment.info.InfoFragmentFactory;
+
+import java.util.List;
 
 public class DetailActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
     public static final String EXTRA_ITEM_ID =
@@ -31,10 +36,12 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
             getSupportActionBar().setHomeButtonEnabled(true);
         }
 
-        if (getIntent() != null) {
-            Bundle extras = getIntent().getExtras();
-            if (extras != null && extras.containsKey(EXTRA_ITEM_ID)) {
-                getLoaderManager().initLoader(R.id.browse_id_loader, extras, this);
+        if (savedInstanceState == null) {
+            if (getIntent() != null) {
+                Bundle extras = getIntent().getExtras();
+                if (extras != null && extras.containsKey(EXTRA_ITEM_ID)) {
+                    getLoaderManager().initLoader(R.id.browse_id_loader, extras, this);
+                }
             }
         }
     }
@@ -60,13 +67,26 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
         KLog.d();
         if (cursor != null && cursor.moveToFirst()) {
-            Item item = BrowseContract.fromCursor(cursor);
+            final Item item = BrowseContract.fromCursor(cursor);
             KLog.d("id " + item.getLocationId());
-            try {
-                InfoFragmentFactory.create(item);
-            } catch (Exception e) {
-                KLog.e(e);
-            }
+            new Handler().post(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        List<Fragment> fragmentList = InfoFragmentFactory.create(item);
+                        if (fragmentList.isEmpty()) {
+                            return;
+                        }
+                        FragmentTransaction transaction = getFragmentManager().beginTransaction();
+                        for (Fragment fragment : fragmentList) {
+                            transaction.add(R.id.info_container, fragment);
+                        }
+                        transaction.commit();
+                    } catch (Exception e) {
+                        KLog.e(e);
+                    }
+                }
+            });
             updateTitle(item.getName());
 
         }

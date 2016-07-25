@@ -1,7 +1,7 @@
 package com.thermsx.localbuoys.ui.fragment.info;
 
+import android.app.Fragment;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 
 public abstract class InfoFragment extends Fragment {
     public static final String EXTRA_INFO_ITEM_ID =

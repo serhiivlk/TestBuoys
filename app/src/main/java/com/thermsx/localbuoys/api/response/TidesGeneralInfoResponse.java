@@ -3,7 +3,7 @@ package com.thermsx.localbuoys.api.response;
 import com.google.gson.annotations.SerializedName;
 import com.thermsx.localbuoys.model.TidesInfo;
 
-public class TidalGeneralInfoResponse {
+public class TidesGeneralInfoResponse {
     @SerializedName("ReturnValue")
     private TidesInfo mTidesInfo;
     @SerializedName("ResultCode")

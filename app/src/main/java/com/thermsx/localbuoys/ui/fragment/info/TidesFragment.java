@@ -11,7 +11,8 @@ import com.socks.library.KLog;
 import com.thermsx.localbuoys.R;
 import com.thermsx.localbuoys.api.ApiFactory;
 import com.thermsx.localbuoys.api.LocalBuoyService;
-import com.thermsx.localbuoys.api.response.TidalGeneralInfoResponse;
+import com.thermsx.localbuoys.api.response.TidesDataResponse;
+import com.thermsx.localbuoys.api.response.TidesGeneralInfoResponse;
 import com.thermsx.localbuoys.databinding.FragmentTidesInfoBinding;
 import com.thermsx.localbuoys.model.TidesInfo;
 
@@ -21,6 +22,14 @@ import retrofit2.Response;
 
 public class TidesFragment extends InfoFragment {
     private FragmentTidesInfoBinding mBinding;
+    private LocalBuoyService mService;
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        mService = ApiFactory.getService();
+    }
 
     @Nullable
     @Override
@@ -32,20 +41,40 @@ public class TidesFragment extends InfoFragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        LocalBuoyService service = ApiFactory.getService();
-        Call<TidalGeneralInfoResponse> call = service.getTidalGeneralInfo(getLocationId());
-        call.enqueue(new Callback<TidalGeneralInfoResponse>() {
+        initGeneralInfo();
+        initData();
+    }
+
+    public void initGeneralInfo() {
+        Call<TidesGeneralInfoResponse> call = mService.getTidesGeneralInfo(getLocationId());
+        call.enqueue(new Callback<TidesGeneralInfoResponse>() {
             @Override
-            public void onResponse(Call<TidalGeneralInfoResponse> call, Response<TidalGeneralInfoResponse> response) {
+            public void onResponse(Call<TidesGeneralInfoResponse> call, Response<TidesGeneralInfoResponse> response) {
                 KLog.d();
                 TidesInfo info = response.body().getTidesInfo();
                 mBinding.setTideInfo(info);
             }
 
             @Override
-            public void onFailure(Call<TidalGeneralInfoResponse> call, Throwable t) {
+            public void onFailure(Call<TidesGeneralInfoResponse> call, Throwable t) {
                 KLog.d();
             }
         });
     }
+
+    public void initData() {
+        Call<TidesDataResponse> call = mService.getTidesData(getLocationId());
+        call.enqueue(new Callback<TidesDataResponse>() {
+            @Override
+            public void onResponse(Call<TidesDataResponse> call, Response<TidesDataResponse> response) {
+
+            }
+
+            @Override
+            public void onFailure(Call<TidesDataResponse> call, Throwable t) {
+
+            }
+        });
+    }
+
 }

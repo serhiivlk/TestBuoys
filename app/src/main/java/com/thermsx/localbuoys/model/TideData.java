@@ -25,7 +25,7 @@ public class TideData {
     private String mDateTime;
     @SerializedName("Value")
     @Expose
-    private double mValue;
+    private float mValue;
 
     public String getDayName() {
         return mDayName;
@@ -51,7 +51,7 @@ public class TideData {
         return mDateTime;
     }
 
-    public double getValue() {
+    public float getValue() {
         return mValue;
     }
 }

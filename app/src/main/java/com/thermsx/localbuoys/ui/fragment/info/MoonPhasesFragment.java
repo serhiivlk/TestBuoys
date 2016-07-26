@@ -15,9 +15,10 @@ import com.socks.library.KLog;
 import com.thermsx.localbuoys.R;
 import com.thermsx.localbuoys.api.ApiFactory;
 import com.thermsx.localbuoys.api.LocalBuoyService;
-import com.thermsx.localbuoys.api.response.MoonPhasesResponse;
+import com.thermsx.localbuoys.api.response.BaseResponse;
 import com.thermsx.localbuoys.databinding.FragmentMoonPhasesInfoBinding;
 import com.thermsx.localbuoys.model.MoonPhasesInfo;
+import com.thermsx.localbuoys.util.CallbackAdapter;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -25,8 +26,6 @@ import java.util.Date;
 import java.util.List;
 
 import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 public class MoonPhasesFragment extends InfoFragment {
     private static final DateFormat FORMAT = new SimpleDateFormat("MM/DD/yyyy");
@@ -46,23 +45,19 @@ public class MoonPhasesFragment extends InfoFragment {
         super.onActivityCreated(savedInstanceState);
         String date = FORMAT.format(new Date());
         LocalBuoyService service = ApiFactory.getService();
-        Call<MoonPhasesResponse> call = service.getMoonPhases(getLocationId(), date);
-        call.enqueue(new Callback<MoonPhasesResponse>() {
+        Call<BaseResponse<MoonPhasesInfo>> call = service.getMoonPhases(getLocationId(), date);
+        call.enqueue(new CallbackAdapter<BaseResponse<MoonPhasesInfo>>() {
             @Override
-            public void onResponse(Call<MoonPhasesResponse> call, Response<MoonPhasesResponse> response) {
+            public void onSuccess(Call<BaseResponse<MoonPhasesInfo>> call, BaseResponse<MoonPhasesInfo> response) {
+                super.onSuccess(call, response);
                 KLog.d();
-                MoonPhasesInfo returnValue = response.body().getReturnValue();
+                MoonPhasesInfo returnValue = response.getReturnValue();
                 mBinding.setMoonInfo(returnValue);
 
                 List<MoonPhasesInfo.MoonInfo> moonInfo = returnValue.getMoonInfo();
                 if (!moonInfo.isEmpty()) {
                     fillMoonInfo(moonInfo);
                 }
-            }
-
-            @Override
-            public void onFailure(Call<MoonPhasesResponse> call, Throwable t) {
-                KLog.e(t);
             }
         });
     }

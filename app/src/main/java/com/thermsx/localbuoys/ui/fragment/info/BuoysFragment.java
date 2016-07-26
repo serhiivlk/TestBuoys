@@ -11,12 +11,12 @@ import com.socks.library.KLog;
 import com.thermsx.localbuoys.R;
 import com.thermsx.localbuoys.api.ApiFactory;
 import com.thermsx.localbuoys.api.LocalBuoyService;
-import com.thermsx.localbuoys.api.response.BuoyInfoResponse;
+import com.thermsx.localbuoys.api.response.BaseResponse;
 import com.thermsx.localbuoys.databinding.FragmentBuoysInfoBinding;
+import com.thermsx.localbuoys.model.BuoyInfo;
+import com.thermsx.localbuoys.util.CallbackAdapter;
 
 import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 public class BuoysFragment extends InfoFragment {
     private FragmentBuoysInfoBinding mBinding;
@@ -32,17 +32,13 @@ public class BuoysFragment extends InfoFragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         LocalBuoyService service = ApiFactory.getService();
-        Call<BuoyInfoResponse> call = service.getBouyInfo(getLocationId());
-        call.enqueue(new Callback<BuoyInfoResponse>() {
+        Call<BaseResponse<BuoyInfo>> call = service.getBouyInfo(getLocationId());
+        call.enqueue(new CallbackAdapter<BaseResponse<BuoyInfo>>() {
             @Override
-            public void onResponse(Call<BuoyInfoResponse> call, Response<BuoyInfoResponse> response) {
+            public void onSuccess(Call<BaseResponse<BuoyInfo>> call, BaseResponse<BuoyInfo> response) {
+                super.onSuccess(call, response);
                 KLog.d();
-                mBinding.setBuoyInfo(response.body().getBuoyInfo());
-            }
-
-            @Override
-            public void onFailure(Call<BuoyInfoResponse> call, Throwable t) {
-                KLog.d();
+                mBinding.setBuoyInfo(response.getReturnValue());
             }
         });
 

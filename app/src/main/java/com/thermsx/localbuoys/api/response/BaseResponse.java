@@ -1,11 +1,12 @@
 package com.thermsx.localbuoys.api.response;
 
 import com.google.gson.annotations.SerializedName;
-import com.thermsx.localbuoys.model.TidesInfo;
 
-public class TidesGeneralInfoResponse {
+public class BaseResponse<T> {
+    public static final int CODE_SUCCESS = 0;
+
     @SerializedName("ReturnValue")
-    private TidesInfo mTidesInfo;
+    private T mReturnValue;
     @SerializedName("ResultCode")
     private int mResultCode;
     @SerializedName("ErrorMessage")
@@ -13,8 +14,12 @@ public class TidesGeneralInfoResponse {
     @SerializedName("ResultCodeName")
     private String mResultCodeName;
 
-    public TidesInfo getTidesInfo() {
-        return mTidesInfo;
+    public boolean isSuccess() {
+        return mResultCode == CODE_SUCCESS;
+    }
+
+    public T getReturnValue() {
+        return mReturnValue;
     }
 
     public int getResultCode() {

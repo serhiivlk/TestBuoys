@@ -17,10 +17,9 @@ import com.thermsx.localbuoys.databinding.ActivityMainBinding;
 import com.thermsx.localbuoys.model.LocationNode;
 import com.thermsx.localbuoys.provider.table.BrowseContract;
 import com.thermsx.localbuoys.ui.fragment.BrowseFragment;
+import com.thermsx.localbuoys.util.CallbackAdapter;
 
 import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 public class MainActivity extends ToolbarActivity implements BrowseFragment.BrowseFragmentListener {
     private static final String FRAGMENT_TAG = "items_list_container";
@@ -121,21 +120,20 @@ public class MainActivity extends ToolbarActivity implements BrowseFragment.Brow
         setLoading(true);
         LocalBuoyService service = ApiFactory.getService();
         Call<LocationListResponse> call = service.getLocationList();
-        call.enqueue(new Callback<LocationListResponse>() {
+        call.enqueue(new CallbackAdapter<LocationListResponse>() {
             @Override
-            public void onResponse(Call<LocationListResponse> call, Response<LocationListResponse> response) {
+            public void onSuccess(Call<LocationListResponse> call, LocationListResponse response) {
+                super.onSuccess(call, response);
+                KLog.d();
                 setLoading(false);
-                LocationListResponse body = response.body();
-                KLog.d(body.getResultCodeName());
-
-                BrowseContract.saveHierarchy(getContext(), body.getRootItem());
+                BrowseContract.saveHierarchy(getContext(), response.getRootItem());
             }
 
             @Override
-            public void onFailure(Call<LocationListResponse> call, Throwable t) {
+            public void onError(Call<LocationListResponse> call, String error) {
+                super.onError(call, error);
                 setLoading(false);
-                KLog.e(t);
-                Toast.makeText(MainActivity.this, t.getMessage(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, error, Toast.LENGTH_SHORT).show();
             }
         });
     }

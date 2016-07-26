@@ -12,12 +12,12 @@ import com.socks.library.KLog;
 import com.thermsx.localbuoys.R;
 import com.thermsx.localbuoys.api.ApiFactory;
 import com.thermsx.localbuoys.api.LocalBuoyService;
-import com.thermsx.localbuoys.api.response.TidesDataResponse;
-import com.thermsx.localbuoys.api.response.TidesGeneralInfoResponse;
+import com.thermsx.localbuoys.api.response.BaseResponse;
 import com.thermsx.localbuoys.databinding.FragmentTidesInfoBinding;
 import com.thermsx.localbuoys.model.TideData;
 import com.thermsx.localbuoys.model.TidesInfo;
 import com.thermsx.localbuoys.model.TidesReturnValue;
+import com.thermsx.localbuoys.util.CallbackAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,8 +26,6 @@ import lecho.lib.hellocharts.model.Line;
 import lecho.lib.hellocharts.model.LineChartData;
 import lecho.lib.hellocharts.model.PointValue;
 import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 public class TidesFragment extends InfoFragment {
     private FragmentTidesInfoBinding mBinding;
@@ -55,28 +53,25 @@ public class TidesFragment extends InfoFragment {
     }
 
     public void initGeneralInfo() {
-        Call<TidesGeneralInfoResponse> call = mService.getTidesGeneralInfo(getLocationId());
-        call.enqueue(new Callback<TidesGeneralInfoResponse>() {
+        Call<BaseResponse<TidesInfo>> call = mService.getTidesGeneralInfo(getLocationId());
+        call.enqueue(new CallbackAdapter<BaseResponse<TidesInfo>>() {
             @Override
-            public void onResponse(Call<TidesGeneralInfoResponse> call, Response<TidesGeneralInfoResponse> response) {
+            public void onSuccess(Call<BaseResponse<TidesInfo>> call, BaseResponse<TidesInfo> response) {
+                super.onSuccess(call, response);
                 KLog.d();
-                TidesInfo info = response.body().getTidesInfo();
+                TidesInfo info = response.getReturnValue();
                 mBinding.setTideInfo(info);
-            }
-
-            @Override
-            public void onFailure(Call<TidesGeneralInfoResponse> call, Throwable t) {
-                KLog.d();
             }
         });
     }
 
     public void initData() {
-        Call<TidesDataResponse> call = mService.getTidesData(getLocationId());
-        call.enqueue(new Callback<TidesDataResponse>() {
+        Call<BaseResponse<TidesReturnValue>> call = mService.getTidesData(getLocationId());
+        call.enqueue(new CallbackAdapter<BaseResponse<TidesReturnValue>>() {
             @Override
-            public void onResponse(Call<TidesDataResponse> call, Response<TidesDataResponse> response) {
-                TidesReturnValue returnValue = response.body().getReturnValue();
+            public void onSuccess(Call<BaseResponse<TidesReturnValue>> call, BaseResponse<TidesReturnValue> response) {
+                super.onSuccess(call, response);
+                TidesReturnValue returnValue = response.getReturnValue();
                 List<TideData> datas = returnValue.getTideDatas();
                 List<PointValue> values = new ArrayList<>();
                 for (TideData data : datas) {
@@ -91,11 +86,6 @@ public class TidesFragment extends InfoFragment {
 
                 mBinding.chart.setInteractive(false);
                 mBinding.chart.setLineChartData(data);
-            }
-
-            @Override
-            public void onFailure(Call<TidesDataResponse> call, Throwable t) {
-
             }
         });
     }
